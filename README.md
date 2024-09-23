@@ -5,12 +5,10 @@
 ## Teamleden
 - **Maarten Gregoor**
 - **Bram Verbeiren**
-- **Tibo Vandenberk**
 - **Yoran Byloos**
 - **Tomas Soors**
 - **Jesse Houben**
 - **Yarne Camps**
-- **Liam Maas**
 - **Robby Willems**
 
 ## Beschrijving
