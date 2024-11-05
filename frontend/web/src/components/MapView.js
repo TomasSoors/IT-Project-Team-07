@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import sharedData from '../../../shared/data';
+import 'leaflet/dist/leaflet.css';
 
 const MapView = () => {
     return (
