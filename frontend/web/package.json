@@ -9,10 +9,17 @@
     "customize-cra": "^1.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
+    "react-native-maps": "^1.18.2",
+    "react-native-web": "^0.19.13",
+    "react-router-dom": "^6.27.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.25.9",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.25.9",
     "react-app-rewire-babel-loader": "^0.1.1",
     "react-app-rewired": "^2.2.1"
   },
@@ -26,6 +33,15 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-syntax-jsx"
     ]
   },
   "browserslist": {
