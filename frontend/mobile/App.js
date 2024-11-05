@@ -1,21 +1,20 @@
 // mobile/App.js
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import SharedCode from '../shared/index'; // Gebruik het juiste pad
+import { StyleSheet, SafeAreaView } from 'react-native';
+import MobileMapView from './components/MapView';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>{SharedCode}</Text>
-    </View>
-  );
-}
+const App = () => {
+    return (
+        <SafeAreaView style={styles.container}>
+            <MobileMapView />
+        </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    container: {
+        flex: 1,
+    },
 });
+
+export default App;
