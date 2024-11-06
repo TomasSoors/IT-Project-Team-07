@@ -23,10 +23,10 @@ const App = () => {
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: 'green',
+          tabBarActiveTintColor: '#030203',
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: {
-            backgroundColor: '#ffffff',
+            backgroundColor: '#7FB241',
             paddingBottom: 5,
           },
         })}
