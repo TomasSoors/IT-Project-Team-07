@@ -1,0 +1,13 @@
+bcrypt
+cryptography
+fastapi
+python-jose
+python-multipart
+SQLAlchemy
+uvicorn
+passlib
+mysql-connector-python
+python-dotenv
+pytest
+httpx
+sqlmodel

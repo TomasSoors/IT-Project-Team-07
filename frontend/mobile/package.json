@@ -7,18 +7,33 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "jest"
   },
   "dependencies": {
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/stack": "^6.4.1",
     "expo": "~48.0.0",
+    "expo-location": "~15.1.1",
     "metro-config": "^0.81.0",
-    "react": "18.2.0",
+    "mobile": "file:",
+    "react": "^18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.71.14",
+    "react-native": "^0.71.14",
+    "react-native-maps": "^1.18.2",
     "react-native-web": "0.18.10"
   },
   "devDependencies": {
-    "babel-preset-expo": "^9.3.0"
+    "@testing-library/jest-native": "^4.0.0",
+    "@testing-library/react-native": "^9.0.0",
+    "babel-preset-expo": "^9.3.0",
+    "jest-expo": "^48.0.0"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect"
+    ]
   },
   "engines": {
     "node": ">=14.0.0"
