@@ -1,0 +1,95 @@
+name: Build and Push Docker Image to GCR
+
+# on:
+#   pull_request:
+#     branches:
+#       - Development
+  
+
+permissions: 
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code  
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Start VM instance
+        run: |
+          gcloud compute instances start sonarqube --zone=europe-west1-d
+
+      - name: Get VM public IP
+        id: get_ip
+        run: |
+          IP_ADDRESS=$(gcloud compute instances describe sonarqube \
+                       --zone=europe-west1-d \
+                       --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+          echo "SONAR_HOST_URL=http://$IP_ADDRESS:9000" >> $GITHUB_ENV
+
+      - name: Wait for SonarQube to be available
+        run: |
+          echo "Waiting for SonarQube to be available at $SONAR_HOST_URL"
+          
+          while : ; do
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $SONAR_HOST_URL || true) 
+            
+            if [[ "$RESPONSE" == "200" ]]; then
+              echo "SonarQube is now available!"
+              break
+            else
+              echo "SonarQube not available yet. Response code: $RESPONSE. Retrying..."
+              sleep 5
+            fi
+          done
+          sleep 20
+        env:
+            SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+
+      - name: run frontend test and coverage
+        run: |
+          cd frontend
+          npm install
+          npm test
+
+      - name: run backend test and coverage
+        run: |
+          cd backend
+          npm install
+          npm test
+
+      - name: SonarQube Scan 
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }} 
+
+      - uses: phwt/sonarqube-quality-gate-action@v1
+        id: quality-gate-check
+        with:
+          sonar-project-key: Mutualism
+          sonar-host-url: ${{ env.SONAR_HOST_URL }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }} 
+
+      - name: Output result
+        run: |
+          echo "${{ steps.quality-gate-check.outputs.project-status }}"
+          echo "${{ steps.quality-gate-check.outputs.quality-gate-result }}"
+ 
+      - name: Stop VM instance
+        run: |
+          gcloud compute instances stop sonarqube --zone=europe-west1-d
+
