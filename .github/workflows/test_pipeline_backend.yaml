@@ -5,6 +5,10 @@ name: pipeline for test environment - backend
 #     branches:
 #       - Test
 
+on:
+  release:
+    types: [published]
+    
 permissions: 
   contents: read
   pull-requests: write
