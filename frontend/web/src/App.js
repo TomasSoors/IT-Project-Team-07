@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import WebMap from './components/MapView';
 import Login from './components/LoginView';
+import UploadView from './components/UploadView';
 
 
 const App = () => {
@@ -12,8 +13,8 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Login/>}></Route>
                 <Route path="/map" element={<WebMap/>}></Route>
+                <Route path="/upload" element={<UploadView/>}></Route>
             </Routes>
-
         </Router>
     );
 };
