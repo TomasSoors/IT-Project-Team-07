@@ -40,6 +40,8 @@ services:
     container_name: my-frontend-container
     ports:
       - "80:80"
+    environment:
+      - EXTERNAL_IP=${EXTERNAL_IP}
     networks:
       - my_network
     depends_on:
