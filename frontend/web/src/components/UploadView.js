@@ -82,6 +82,7 @@ function UploadView() {
         borderRadius: '8px',
         marginBottom: '20px',
         color: '#777',
+        margin: "20px",
       }}
     >
       <p>Sleep je JSON-bestand hierheen of</p>
