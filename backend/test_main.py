@@ -73,7 +73,6 @@ def test_login_user_wrong_password(client):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 def test_verify_token(client):
-    # Eerst een gebruiker registreren en inloggen om een token te krijgen
     client.post(
         "/register",
         json={"username": "testuser", "password": "testpassword"},
@@ -84,13 +83,35 @@ def test_verify_token(client):
     )
     token = login_response.json()["access_token"]
 
-    # Verifieer de token
     response = client.get(f"/verify-token/{token}")
     assert response.status_code == 200
-    assert response.json() == {"message": "token is valid"}
+    assert response.json() == {"message": "Token is valid"}
 
 def test_verify_invalid_token(client):
-    # Gebruik een ongeldig token
     invalid_token = "invalidtoken123"
     response = client.get(f"/verify-token/{invalid_token}")
-    assert response.status_code == 403
+    assert response.status_code == 401
+
+def test_revoke_token(client):
+    client.post("/register", json={"username": "testuser", "password": "testpassword"})
+    login_response = client.post("/login", data={"username": "testuser", "password": "testpassword"})
+    token = login_response.json()["access_token"]
+
+    response = client.post(f"/revoke-token/{token}")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Token has been revoked."}
+
+    verify_response = client.get(f"/verify-token/{token}")
+    assert verify_response.status_code == 401
+    assert verify_response.json() == {"detail": "Token has been revoked."}
+
+def test_revoke_already_revoked_token(client):
+    client.post("/register", json={"username": "testuser", "password": "testpassword"})
+    login_response = client.post("/login", data={"username": "testuser", "password": "testpassword"})
+    token = login_response.json()["access_token"]
+
+    client.post(f"/revoke-token/{token}")
+
+    second_revoke_response = client.post(f"/revoke-token/{token}")
+    assert second_revoke_response.status_code == 400
+    assert second_revoke_response.json() == {"detail": "Token has already been revoked."}

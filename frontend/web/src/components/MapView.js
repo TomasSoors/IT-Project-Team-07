@@ -11,7 +11,7 @@ const MapView = () => {
 
     useEffect(() => {
         const verifyToken = async () => {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             if (!token) return;
 
             try {
@@ -37,6 +37,25 @@ const MapView = () => {
     const handleUploadClick = () => {
         navigate("/upload");
     };
+    const handleLogoutClick = async () => {
+        console.log("Logging out...");
+        try {
+            const token = sessionStorage.getItem('token');
+            await fetch(`http://localhost:8000/revoke-token/${token}`, {
+                method: 'POST',
+            });
+            sessionStorage.removeItem('token');
+            console.log("Token revoked successfully.");
+        } catch (error) {
+            console.error("Er is een fout opgetreden bij het revoken van de token:", error);
+        }
+    
+        // Zet de authenticatiestatus naar false
+        setIsAuthenticated(false);
+    
+        // Navigeren naar de homepagina (of loginpagina)
+        navigate("/");
+    };
 
     return (
         <div style={{ position: 'relative', height: '100vh', width: '100%' }}>
@@ -56,27 +75,46 @@ const MapView = () => {
 
             {/* Uploadknop weergeven als de gebruiker ingelogd is */}
             {isAuthenticated && (
+            <div style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                display: 'flex',
+                gap: '10px',
+                zIndex: 1000
+            }}>
                 <button
                     onClick={handleUploadClick}
                     style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
                         padding: '10px 20px',
                         backgroundColor: '#007bff',
                         color: 'white',
                         border: 'none',
                         borderRadius: '5px',
                         cursor: 'pointer',
-                        fontSize: '16px',
-                        zIndex: 1000
+                        fontSize: '16px'
                     }}
                 >
                     Upload Bestand
                 </button>
-            )}
-        </div>
-    );
+                <button
+                    onClick={handleLogoutClick}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#dc3545', // red color for logout
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontSize: '16px'
+                    }}
+                >
+                    Logout
+                </button>
+            </div>
+        )}
+    </div>
+);
 };
 
 export default MapView;
