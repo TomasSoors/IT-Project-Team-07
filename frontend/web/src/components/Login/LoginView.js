@@ -26,7 +26,7 @@ const Login = () => {
 
     try {
       const baseUrl = process.env.EXTERNAL_IP || 'localhost';
-      const response = await fetch('http://${baseUrl}:8000/login', {
+      const response = await fetch(`http://${baseUrl}:8000/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
