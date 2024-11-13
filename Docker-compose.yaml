@@ -39,7 +39,7 @@ services:
       context: ./frontend
     container_name: my-frontend-container
     ports:
-      - "3000:80"
+      - "80:80"
     environment:
       - REACT_APP_EXTERNAL_IP=${REACT_APP_EXTERNAL_IP}
     networks:
