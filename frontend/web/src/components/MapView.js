@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-// import sharedData from '../../../shared/data';
-import sharedData from '/app/shared/data';
+import sharedData from '../../../shared/data';
 import 'leaflet/dist/leaflet.css';
 import { useNavigate } from 'react-router-dom';
 import L from 'leaflet';
-// import treeLogo from '../../../shared/images/tree-icon.png'
-import treeLogo from '/app/shared/images/tree-icon.png'
+import treeLogo from '../../../shared/images/tree-icon.png'
 
 const treeIcon = L.icon({
     iconUrl: treeLogo,  // URL van de afbeelding die je wilt gebruiken
