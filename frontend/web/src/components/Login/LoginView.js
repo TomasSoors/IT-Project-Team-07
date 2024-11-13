@@ -25,7 +25,7 @@ const Login = () => {
     formDetails.append('password', password);
 
     try {
-      const baseUrl = process.env.EXTERNAL_IP || 'localhost';
+      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
       const response = await fetch(`http://${baseUrl}:8000/login`, {
         method: 'POST',
         headers: {
