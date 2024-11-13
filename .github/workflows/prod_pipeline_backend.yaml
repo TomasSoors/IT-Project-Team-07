@@ -1,0 +1,61 @@
+name: pipeline for production environment - backend
+
+# on:
+#   pull_request:
+#     branches:
+#       - main
+
+on:
+  release:
+    types: [published]
+
+permissions: 
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code  
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configure Docker to use Google Cloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: change database URL
+        run: |
+          echo "hello world"
+
+      - name: Build production backend Docker image 
+        run: |   
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend"  
+          TAG="2" 
+          docker build -t "$IMAGE_NAME:$TAG" backend
+
+      - name: Push production backend Docker image to GCR
+        run: |
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-production"  
+          TAG="2" 
+          docker push "$IMAGE_NAME:$TAG"
+
+      - name: 'deploy production backend'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'mutualism-backend'
+          region: 'europe-west1'
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-production:2'
+
+     

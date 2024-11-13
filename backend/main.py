@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from models import User
+from models import User, RevokedToken
 from database import SessionLocal, get_db
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -104,17 +104,48 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 
 # Verificatie van een token 
 
-def verify_token(token: str = Depends(oauth2_scheme)):
+def verify_token(token: str, db: Session):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = str = payload.get("sub")
+        username = payload.get("sub")
         if username is None:
-            raise HTTPException(status_code=403, detail="Token is invalid or expired")
-        return payload
+            raise HTTPException(status_code=401, detail="Invalid token.")
+        revoked_token = db.query(RevokedToken).filter(RevokedToken.token == token).first()
+        if revoked_token:
+            raise HTTPException(status_code=401, detail="Token has been revoked.")
+        return username
     except JWTError:
-        raise HTTPException(status_code=403, detail="Token is invalid or expired")
+        raise HTTPException(status_code=401, detail="Token is invalid or expired.")
 
 @app.get("/verify-token/{token}")
-async def verify_user_token(token: str):
-    verify_token(token=token)
-    return {"message": "token is valid"}   
+async def verify_user_token(token: str, db: Session = Depends(get_db)):
+    verify_token(token=token, db=db)
+    return {"message": "Token is valid"}
+
+
+def revoke_token(token: str, db: Session):
+    existing_token = db.query(RevokedToken).filter_by(token=token).first()
+    if existing_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token has already been revoked.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )           
+    try:
+        revoked_token = RevokedToken(token=token)
+        db.add(revoked_token)
+        db.commit()
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Token is invalid or expired.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+@app.post("/revoke-token/{token}")
+def revoke_user_token(token: str, db: Session = Depends(get_db)):
+    try:
+        revoke_token(token, db)
+        return {"message": "Token has been revoked."}
+    except HTTPException as e:
+        raise e
