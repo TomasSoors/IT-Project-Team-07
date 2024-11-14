@@ -11,7 +11,7 @@ function UploadView() {
     const nav = navigate;
 
     const verifyToken = async () => {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         if (!token) {
             nav("/");
         }
