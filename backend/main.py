@@ -11,6 +11,9 @@ from database import SessionLocal, get_db
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
+
+
+
 app = FastAPI()
 
 load_dotenv()
@@ -18,17 +21,19 @@ load_dotenv()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 origins = [
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "*",
 ]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # This correctly allows all origins
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers in the request
 )
-
+    
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

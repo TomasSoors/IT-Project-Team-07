@@ -11,13 +11,14 @@ function UploadView() {
     const nav = navigate;
 
     const verifyToken = async () => {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         if (!token) {
             nav("/");
         }
     
         try {
-            const response = await fetch(`http://localhost:8000/verify-token/${token}`, {
+          const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
+            const response = await fetch(`http://${baseUrl}:8000/verify-token/${token}`, {
                 method: "GET",
             });
     
@@ -82,6 +83,7 @@ function UploadView() {
         borderRadius: '8px',
         marginBottom: '20px',
         color: '#777',
+        margin: "20px",
       }}
     >
       <p>Sleep je JSON-bestand hierheen of</p>
