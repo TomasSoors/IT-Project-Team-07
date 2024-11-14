@@ -3,6 +3,15 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import sharedData from '../../../shared/data';
 import 'leaflet/dist/leaflet.css';
 import { useNavigate } from 'react-router-dom';
+import L from 'leaflet';
+import treeLogo from '../../../shared/images/tree-icon.png'
+
+const treeIcon = L.icon({
+    iconUrl: treeLogo,  // URL van de afbeelding die je wilt gebruiken
+    iconSize: [40, 40],      // Afmetingen van het icoon (aanpassen indien gewenst)
+    iconAnchor: [16, 32],    // Punt waarop het icoon verankerd is (meestal het midden-onder
+    popupAnchor: [0, -32]    
+});
 
 
 const MapView = () => {
@@ -15,7 +24,8 @@ const MapView = () => {
             if (!token) return;
 
             try {
-                const response = await fetch(`http://localhost:8000/verify-token/${token}`, {
+                const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
+                const response = await fetch(`http://${baseUrl}:8000/verify-token/${token}`, {
                     method: 'GET',
                 });
 
@@ -41,7 +51,8 @@ const MapView = () => {
         console.log("Logging out...");
         try {
             const token = sessionStorage.getItem('token');
-            await fetch(`http://localhost:8000/revoke-token/${token}`, {
+            const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
+            await fetch(`http://${baseUrl}:8000/revoke-token/${token}`, {
                 method: 'POST',
             });
             sessionStorage.removeItem('token');
@@ -65,7 +76,7 @@ const MapView = () => {
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 />
                 {sharedData.map(tree => (
-                    <Marker key={tree.id} position={[tree.latitude, tree.longitude]}>
+                    <Marker key={tree.id} position={[tree.latitude, tree.longitude]} icon={treeIcon}>
                         <Popup>
                             <strong>{tree.title}</strong><br />{tree.description}
                         </Popup>
