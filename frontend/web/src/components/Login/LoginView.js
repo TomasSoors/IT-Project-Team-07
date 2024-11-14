@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import "./LoginView.css";
 
 /*
 Wat er nog moet gebeuren:
-- mooi maken van login pagina en uploadzone
 - testen schrijven
 */
 
@@ -13,7 +13,7 @@ const Login = () => {
   const [error, setError] = useState(null);  // State voor foutmeldingen
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async () => {  
     // Controleer of beide velden zijn ingevuld
     if (!username || !password) {
       setError('Vul zowel gebruikersnaam als wachtwoord in.');
@@ -25,7 +25,8 @@ const Login = () => {
     formDetails.append('password', password);
 
     try {
-      const response = await fetch('http://localhost:8000/login', {
+      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
+      const response = await fetch(`http://${baseUrl}:8000/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -53,43 +54,48 @@ const Login = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
+    <div className="body-container">
+    <div className="login-container">
+      <img src='logopxlboom.png' alt="logo"></img>
       <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <label htmlFor='username'>Username</label>
       <input
+        id="username"
         type="text"
-        placeholder="Gebruikersnaam"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         style={{
           display: 'block',
           width: '100%',
           padding: '10px',
-          marginBottom: '10px',
-          borderRadius: '4px',
+          marginBottom: '20px',
+          borderRadius: '10px',
           border: '1px solid #ccc',
         }}
       />
+      <label htmlFor='password'>Password</label>
       <input
+        id="password"
         type="password"
-        placeholder="Wachtwoord"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         style={{
           display: 'block',
           width: '100%',
           padding: '10px',
-          marginBottom: '10px',
-          borderRadius: '4px',
+          marginBottom: '40px',
+          borderRadius: '10px',
           border: '1px solid #ccc',
         }}
       />
-      <button onClick={handleLogin} style={{ width: '100%', padding: '10px', marginBottom: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+      {error && <p style={{ color: 'red', marginBottom: '40px' }}>{error}</p>}
+      <button onClick={handleLogin} style={{fontWeight: 'bold', width: '50%', padding: '10px', marginBottom: '10px', backgroundColor: '#A9907E', color: '#F3DEBA', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
         Login
       </button>
-      <button onClick={handleGuest} style={{ width: '100%', padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-        Ga verder als Gast
+      <button onClick={handleGuest} style={{fontWeight: 'bold', width: '50%', padding: '10px', backgroundColor: '#F3DEBA', border: '2px solid #A9907E', color: '#A9907E', borderRadius: '4px', cursor: 'pointer' }}>
+        Ga verder als gast
       </button>
+    </div>
     </div>
   );
 };
