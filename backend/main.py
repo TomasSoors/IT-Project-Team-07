@@ -42,6 +42,13 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
+def standard_response(success: bool, message: str, data: dict | None = None):
+    return {
+        "success": success,
+        "message": message,
+        "data": data
+    }
+
 # Registratie van een nieuwe user
 
 class UserCreate(BaseModel):
@@ -56,13 +63,17 @@ def create_user(db: Session, user: UserCreate):
     db_user = User(username=user.username, hashed_password=hashed_password)
     db.add(db_user)
     db.commit()
-    return "complete"
+    db.refresh(db_user)
+    return standard_response(True, "User created successfully", {"user_id": db_user.id, "username": db_user.username})
 
 @app.post("/register")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = get_user_by_username(db, username=user.username)
     if db_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
+        raise HTTPException(
+            status_code=400, 
+            detail=standard_response(False, "Username already registered")
+        )
     return create_user(db=db, user=user)
 
 
@@ -92,14 +103,14 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect password or username",
+            detail=standard_response(False, "Incorrect username or password"),
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type":"bearer"}
+    return standard_response(True, "Login successful", {"access_token": access_token, "token_type": "bearer"})
 
 
 # Verificatie van een token 
@@ -120,7 +131,7 @@ def verify_token(token: str, db: Session):
 @app.get("/verify-token/{token}")
 async def verify_user_token(token: str, db: Session = Depends(get_db)):
     verify_token(token=token, db=db)
-    return {"message": "Token is valid"}
+    return standard_response(True, "Token is valid")
 
 
 def revoke_token(token: str, db: Session):
@@ -146,6 +157,9 @@ def revoke_token(token: str, db: Session):
 def revoke_user_token(token: str, db: Session = Depends(get_db)):
     try:
         revoke_token(token, db)
-        return {"message": "Token has been revoked."}
+        return standard_response(True, "Token has been revoked.")
     except HTTPException as e:
-        raise e
+        raise HTTPException(
+            status_code=e.status_code,
+            detail=standard_response(False, e.detail)
+        )
