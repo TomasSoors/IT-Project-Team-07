@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
-import MobileMapView from '../components/MapView';
+import MobileMapView from '../components/MobileMapView';
 import * as Location from 'expo-location';
 import sharedData from '../../shared/data';
 
