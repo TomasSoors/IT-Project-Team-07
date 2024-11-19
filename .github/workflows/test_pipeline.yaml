@@ -3,7 +3,7 @@
   on:
     push:
       branches:
-        - Test
+        - Test-pipeline
 
   jobs:
     terraform:
