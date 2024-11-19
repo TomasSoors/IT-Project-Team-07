@@ -33,10 +33,10 @@ describe('MobileMapView', () => {
   });
 
   it('renders the map correctly', async () => {
-    const component = render(<MobileMapView />);
+    const { getByTestId } = render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
-        expect(component.getByTestId('map-view')).toBeTruthy();
+        expect(getByTestId('map-view')).toBeTruthy();
       });
     });
   });
@@ -47,20 +47,20 @@ describe('MobileMapView', () => {
   });
 
   it('sets user location marker on map', async () => {
-    const component = render(<MobileMapView />);
+    const { getByTestId } = render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
-        expect(component.getByTestId('your-location')).toBeTruthy();
+        expect(getByTestId('your-location')).toBeTruthy();
       });
     });
   });
 
   it('renders shared data markers', async () => {
-    const component = render(<MobileMapView />);
+    const { getByTestId } = render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
         sharedData.forEach(tree => {
-          expect(component.getByTestId(`marker-${tree.id}`)).toBeTruthy();
+          expect(getByTestId(`marker-${tree.id}`)).toBeTruthy();
         });
       });
     });
@@ -69,7 +69,7 @@ describe('MobileMapView', () => {
   it('shows alert when location permission is denied', async () => {
     Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'denied' });
 
-    const component = render(<MobileMapView />);
+    const { getByTestId } = render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
@@ -81,12 +81,43 @@ describe('MobileMapView', () => {
   });
 
   it('user location marker reflects the user location accurately', async () => {
-    const component = render(<MobileMapView />);
+    const { getByTestId } = render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
-        const userMarker = component.getByTestId('your-location');
+        const userMarker = getByTestId('your-location');
         expect(userMarker.props.coordinate.latitude).toBeCloseTo(mockLocation.coords.latitude, 5);
         expect(userMarker.props.coordinate.longitude).toBeCloseTo(mockLocation.coords.longitude, 5);
+      });
+    });
+  });
+
+  it('sets user location state when user location is obtained', async () => {
+    Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'granted' });
+    Location.getCurrentPositionAsync.mockResolvedValueOnce({
+      coords: {
+        latitude: 50.8503,
+        longitude: 4.3517,
+      },
+    });
+
+    const { getByTestId } = render(<MobileMapView />);
+    await act(async () => {
+      await waitFor(() => {
+        const userLocationMarker = getByTestId('your-location');
+        expect(userLocationMarker.props.coordinate.latitude).toBe(50.8503);
+        expect(userLocationMarker.props.coordinate.longitude).toBe(4.3517);
+      });
+    });
+  });
+
+  it('does not set user location state when user location is null', async () => {
+    Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'granted' });
+    Location.getCurrentPositionAsync.mockResolvedValueOnce(null);
+
+    const { getByTestId } = render(<MobileMapView />);
+    await act(async () => {
+      await waitFor(() => {
+        expect(() => getByTestId('your-location')).toThrow('Unable to find an element with testID: your-location');
       });
     });
   });
