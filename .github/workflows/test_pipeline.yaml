@@ -34,7 +34,7 @@
       - name: Modify startup.sh script
         run: |
           cd terragrunt/live/test/instance
-          sed -i 's|https://github.com/BramVerbeirenPXL/IT-Project-Team-07.git|https://${{ secrets.PAT_TOKEN }}@github.com/BramVerbeirenPXL/IT-Project-Team-07.git|' startup.sh
+          sed -i 's|https://github.com/BramVerbeirenPXL/IT-Project-Team-07.git|https://${{ secrets.GITHUB_TOKEN }}@github.com/BramVerbeirenPXL/IT-Project-Team-07.git|' startup.sh
         
 
       - name: destroy Terraform
