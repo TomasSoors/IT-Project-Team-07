@@ -5,6 +5,7 @@ import './App.css';
 import WebMap from './components/WebMapView';
 import Login from './components/Login/LoginView';
 import UploadView from './components/UploadView';
+import "@fontsource/jost";
 
 
 const App = () => {
