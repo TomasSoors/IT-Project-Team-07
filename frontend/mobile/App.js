@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import MobileMapView from './components/MapView';
+import MobileMapView from './components/MobileMapView';
 import TreeList from './components/TreeList';
 
 const Tab = createBottomTabNavigator();
