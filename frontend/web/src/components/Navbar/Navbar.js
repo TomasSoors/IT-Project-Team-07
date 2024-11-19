@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./Navbar.css"
 import { useNavigate } from 'react-router-dom';
+import "@fontsource/jost";
 
 
 const Navbar = () => {
