@@ -33,9 +33,9 @@ jobs:
           sudo apt-get install -y maven
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version:  lts/*
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          sudo mvn --batch-mode --no-transfer-progress clean install -DskipTests
+          mvn -B install -D skipTests --no-transfer-progress
 
       # Stap 4: Voer Playwright-tests uit
       - name: Run Playwright tests
