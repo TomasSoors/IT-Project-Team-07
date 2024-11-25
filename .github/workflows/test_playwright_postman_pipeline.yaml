@@ -29,12 +29,7 @@ jobs:
         
 
       
-      - name: Verify Java and Maven Versions
-        run: |
-          java -version
-          javac -version
-          echo $JAVA_HOME
-          mvn --version
+      
 
       - name: Install Latest Maven
         run: |
@@ -44,7 +39,12 @@ jobs:
           sudo tar -xvzf apache-maven-3.9.5-bin.tar.gz -C /opt/
           sudo rm -f /usr/bin/mvn  # Remove any existing symlink for mvn
           sudo ln -s /opt/apache-maven-3.9.5/bin/mvn /usr/bin/mvn  # Create new symlink
-
+      - name: Verify Java and Maven Versions
+          run: |
+            java -version
+            javac -version
+            echo $JAVA_HOME
+            mvn --version
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
