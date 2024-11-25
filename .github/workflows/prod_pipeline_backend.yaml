@@ -1,61 +1,50 @@
 name: pipeline for production environment - backend
 
-# on:
-#   pull_request:
-#     branches:
-#       - main
-
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
 
-permissions: 
-  contents: read
-  pull-requests: write
 
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code  
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+ steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-
+      
       - name: Configure Docker to use Google Cloud credentials
         run: |
           gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-      - name: change database URL
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+       - name: Encode GCP Service Account Key as Base64
         run: |
-          echo "hello world"
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 > gcp-service-account-key.base64
+        id: encode_key
 
-      - name: Build production backend Docker image 
-        run: |   
-          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend"  
-          TAG="2" 
-          docker build -t "$IMAGE_NAME:$TAG" backend
-
-      - name: Push production backend Docker image to GCR
+      - name: Build Docker image
         run: |
-          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-production"  
-          TAG="2" 
-          docker push "$IMAGE_NAME:$TAG"
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"
+          docker build --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+                       --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+                       --build-arg GOOGLE_APPLICATION_CREDENTIALS_BASE64="$(cat gcp-service-account-key.base64)" \
+                       -t "$IMAGE_NAME" .
 
-      - name: 'deploy production backend'
+
+      - name: Push production frontend Docker image to GCR
+        run: |
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"  
+          docker push "$IMAGE_NAME"
+
+      - name: 'deploy production frontend'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: 'mutualism-backend'
           region: 'europe-west1'
-          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-production:2'
-
-     
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backen-test:2'

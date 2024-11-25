@@ -14,8 +14,8 @@ const Navbar = () => {
       if (!token) return;
 
       try {
-        const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
-        const response = await fetch(`http://${baseUrl}:8000/verify-token/${token}`, {
+        const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+        const response = await fetch(`${baseUrl}/verify-token/${token}`, {
           method: 'GET',
         });
 
