@@ -4,11 +4,19 @@ import MobileMapView from '../components/MobileMapView';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import sharedData from '../../shared/data';
+import { useNavigation } from '@react-navigation/native';
 
 // Mock the Location module and Alert
 jest.mock('expo-location', () => ({
   requestForegroundPermissionsAsync: jest.fn(),
   getCurrentPositionAsync: jest.fn(),
+}));
+
+// Mock useNavigation
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: jest.fn(),
+  }),
 }));
 
 // Mock data for user location
@@ -69,7 +77,7 @@ describe('MobileMapView', () => {
   it('shows alert when location permission is denied', async () => {
     Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'denied' });
 
-    const { getByTestId } = render(<MobileMapView />);
+    render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
@@ -114,10 +122,10 @@ describe('MobileMapView', () => {
     Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'granted' });
     Location.getCurrentPositionAsync.mockResolvedValueOnce(null);
 
-    const { getByTestId } = render(<MobileMapView />);
+    const { queryByTestId } = render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
-        expect(() => getByTestId('your-location')).toThrow('Unable to find an element with testID: your-location');
+        expect(queryByTestId('your-location')).toBeNull();
       });
     });
   });
