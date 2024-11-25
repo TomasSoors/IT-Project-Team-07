@@ -53,6 +53,12 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  
 
+      
+      - name: Verify Java version
+        run: java -version
+
+      - name: Verify Maven version
+        run: mvn -version
 
       # Stap 3: Installeer afhankelijkheden
       - name: Install dependencies
