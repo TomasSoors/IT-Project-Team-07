@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
+import PropTypes from 'prop-types';
 import treeIcon from '../assets/tree-icon.png';
 import infoIcon from '../assets/info.png';
 
@@ -20,6 +21,20 @@ const MobileTreeDetailsView = ({ route }) => {
       </View>
     </View>
   );
+};
+
+MobileTreeDetailsView.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      tree: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
+        diameter: PropTypes.number.isRequired,
+        latitude: PropTypes.number.isRequired,
+        longitude: PropTypes.number.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 const styles = StyleSheet.create({
