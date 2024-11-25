@@ -24,14 +24,14 @@ jobs:
       - name: Set up Maven
         uses: actions/setup-java@v3
         with:
-          java-version: '21' # Kies de juiste versie voor jouw proj
+          java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin'
         
       - name: Install latest Maven
         run: |
           sudo apt-get update
           sudo apt-get install -y maven
-          
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
