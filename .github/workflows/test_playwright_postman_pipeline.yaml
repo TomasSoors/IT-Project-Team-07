@@ -28,6 +28,10 @@ jobs:
           distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakelen
           maven-version: '3.9.5' 
         
+
+      - name: Set JAVA_HOME
+        run: export JAVA_HOME=/usr/lib/jvm/java-21-temurin 
+
       - name: Install Latest Maven
         run: |
           sudo apt-get remove -y maven  # Uninstall existing Maven
