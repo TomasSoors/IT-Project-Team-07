@@ -38,7 +38,7 @@ jobs:
           docker build --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
                        --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
                        --build-arg GOOGLE_APPLICATION_CREDENTIALS="${{ steps.auth.outputs.credentials_file_path }}" \
-                       -t "$IMAGE_NAME" /backend
+                       -t "$IMAGE_NAME" backend
 
 
       - name: Push production frontend Docker image to GCR
