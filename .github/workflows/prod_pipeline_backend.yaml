@@ -27,14 +27,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      - name: Copy Google Cloud Credentials
-        run: |
-          cp "${{ steps.auth.outputs.credentials_file_path }}" ./backend/gcloud-credentials.json
-
-      # - name: Encode GCP Service Account Key as Base64
+      # - name: Copy Google Cloud Credentials
       #   run: |
-      #     echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 > gcp-service-account-key.base64
-      #   id: encode_key
+      #     cp "${{ steps.auth.outputs.credentials_file_path }}" ./backend/gcloud-credentials.json
+
+      - name: Write Google Cloud credentials to a file
+        run: |
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > ./backend/gcloud-credentials.json
 
       - name: Build Docker image
         run: |
