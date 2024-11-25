@@ -31,6 +31,7 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
+
         sessionStorage.setItem('token', data.data.access_token);
         navigate('/map');
       } else if (response.status === 401) {
