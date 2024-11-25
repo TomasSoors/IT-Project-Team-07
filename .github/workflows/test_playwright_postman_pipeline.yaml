@@ -61,7 +61,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          sudo mvn clean install -e
+          sudo mvn --batch-mode --no-transfer-progress clean install -DskipTests
 
       # Stap 4: Voer Playwright-tests uit
       - name: Run Playwright tests
