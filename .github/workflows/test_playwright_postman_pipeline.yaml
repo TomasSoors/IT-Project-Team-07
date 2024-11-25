@@ -16,7 +16,7 @@ jobs:
       - name: Clone test repository 
         run: |
           sudo mkdir /test-repo
-          sudo git clone https://github.com/RobbyWillemsPXL.git /test-repo
+          sudo git clone https://github.com/RobbyWillemsPXL/Mutualism-Testing.git /test-repo
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
 
