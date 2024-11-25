@@ -20,15 +20,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
 
-      - name: List directory contents for debugging
-        run: |
-          ls -R /test-repo
-
       - name: Set up Maven
         uses: actions/setup-java@v3
         with:
           java-version: '21' # Kies de juiste versie voor jouw proj
-          distribution: 'temurin'
+          distribution: 'adoptium'
         
 
       - name: Set up Node.js
@@ -63,8 +59,6 @@ jobs:
       # Stap 3: Installeer afhankelijkhede
       - name: Install dependencies
         run: |
-          export JAVA_HOME=/path/to/jdk-17
-          export PATH=$JAVA_HOME/bin:$PATH
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           sudo mvn clean install -e
 
