@@ -63,6 +63,7 @@ jobs:
       # Stap 4: Voer Playwright-tests uit
       - name: Run Playwright tests
         run: |
+          export JAVA_HOME=$(/usr/libexec/java_home -v 17)
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           sudo mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
         env:
