@@ -23,8 +23,7 @@ jobs:
       - name: List directory contents for debugging
         run: |
           ls -R /test-repo
-
-      # Stap 2: Stel Maven en Node.js in
+          
       - name: Set up Maven
         uses: actions/setup-java@v3
         with:
