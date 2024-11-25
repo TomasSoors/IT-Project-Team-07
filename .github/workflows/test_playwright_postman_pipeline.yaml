@@ -27,10 +27,13 @@ jobs:
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin'
         
-      - name: Install latest Maven
+      name: Install Latest Maven
         run: |
+          sudo apt-get remove -y maven
           sudo apt-get update
-          sudo apt-get install -y maven
+          wget https://downloads.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
+          sudo tar -xvzf apache-maven-3.9.5-bin.tar.gz -C /opt/
+          sudo ln -s /opt/apache-maven-3.9.5/bin/mvn /usr/bin/mvn
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
