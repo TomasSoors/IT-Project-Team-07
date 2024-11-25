@@ -32,6 +32,13 @@ jobs:
       - name: Set JAVA_HOME
         run: export JAVA_HOME=/usr/lib/jvm/java-21-temurin 
 
+      - name: Verify Java and Maven Versions
+        run: |
+          java -version
+          javac -version
+          echo $JAVA_HOME
+          mvn --version
+
       - name: Install Latest Maven
         run: |
           sudo apt-get remove -y maven  # Uninstall existing Maven
