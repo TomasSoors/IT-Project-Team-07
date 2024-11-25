@@ -16,6 +16,7 @@ jobs:
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
+        id: auth
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
       
@@ -26,17 +27,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Encode GCP Service Account Key as Base64
-        run: |
-          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 > gcp-service-account-key.base64
-        id: encode_key
+      # - name: Encode GCP Service Account Key as Base64
+      #   run: |
+      #     echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 > gcp-service-account-key.base64
+      #   id: encode_key
 
       - name: Build Docker image
         run: |
           IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"
           docker build --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
                        --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-                       --build-arg GOOGLE_APPLICATION_CREDENTIALS_BASE64="$(cat gcp-service-account-key.base64)" \
+                       --build-arg GOOGLE_APPLICATION_CREDENTIALS="${{ steps.auth.outputs.credentials_file_path }}" \
                        -t "$IMAGE_NAME" .
 
 
