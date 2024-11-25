@@ -29,7 +29,7 @@ jobs:
       
       - name: Copy Google Cloud Credentials
         run: |
-          cp "${{ steps.auth.outputs.credentials_file_path }}" ./gcloud-credentials.json
+          cp "${{ steps.auth.outputs.credentials_file_path }}" ./backend/gcloud-credentials.json
 
       # - name: Encode GCP Service Account Key as Base64
       #   run: |
