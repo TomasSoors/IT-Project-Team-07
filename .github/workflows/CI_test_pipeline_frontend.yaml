@@ -1,0 +1,57 @@
+name: pipeline for production environment - frontend
+
+on:
+  push:
+    branches:
+      - Development
+
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      
+      - name: Configure Docker to use Google Cloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Get Cloud Run URL and Set as Env Variable
+        run: |
+          SERVICE_NAME="mutualism-backend"
+          REGION="europe-west1"
+          PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
+          URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
+          echo "Cloud Run URL is: $URL"
+          sudo echo "CLOUD_RUN_URL=$URL" >> frontend/web/.env
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} 
+
+      - name: Build test frontend Docker image
+        run: |
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-frontend-test"
+          docker build -t "$IMAGE_NAME" frontend
+
+
+      - name: Push test frontend Docker image to GCR
+        run: |
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-frontend-test"  
+          docker push "$IMAGE_NAME"
+
+      - name: 'deploy production frontend'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'mutualism-frontend'
+          region: 'europe-west1'
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-frontend-test:latest'
