@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import data from '../../../shared/data';
 import Navbar from './Navbar/Navbar';
 
 function UploadView() {
@@ -41,8 +42,36 @@ function UploadView() {
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
-          const content = JSON.parse(event.target.result);
-          setFileContent(content);
+          const response = JSON.parse(event.target.result);
+          if (Array.isArray(response)) {
+            const validTrees = response.filter(tree => {
+              return (
+                tree.name &&
+                tree.position &&
+                Array.isArray(tree.position) &&
+                tree.position.length === 2 &&
+                typeof tree.position[0] === 'number' &&
+                typeof tree.position[1] === 'number'
+              );
+            });
+  
+            if (validTrees.length > 0) {
+              validTrees.forEach(tree => {
+                const [latitude, longitude] = tree.position; // Split position into latitude and longitude
+                data.addTree({
+                  name: tree.name,
+                  description: tree.description || 'No description provided',
+                  latitude,
+                  longitude,
+                });
+              });
+              navigate('/map'); // Redirect naar de kaart
+            } else {
+              alert('The uploaded JSON must contain an array of trees with name and position.');
+            }
+          } else {
+            alert('The uploaded JSON must be an array of trees.');
+          }
           setError(null);
         } catch (err) {
           setError("Er is een fout opgetreden bij het lezen van het JSON-bestand.");
@@ -55,6 +84,7 @@ function UploadView() {
       setFileContent(null);
     }
   };
+
 
 
 
