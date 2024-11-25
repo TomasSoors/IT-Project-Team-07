@@ -42,6 +42,7 @@ jobs:
         run: |
           SERVICE_NAME="mutualism-backend"
           REGION="europe-west1"
+          PROJECT_ID="buzzwatch-422510"
           URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --format 'value(status.url)')
           echo "Cloud Run URL is: $URL"
           echo "CLOUD_RUN_URL=$URL" >> $GITHUB_ENV
