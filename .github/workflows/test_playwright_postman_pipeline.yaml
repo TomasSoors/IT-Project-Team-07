@@ -60,7 +60,7 @@ jobs:
           cd "test-repo/Sprint 2/Playwright/MutualismWebTesting"
           mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
          env:
-             CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
+            CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
 
   postman-tests:
     runs-on: ubuntu-latest
