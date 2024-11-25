@@ -21,7 +21,8 @@ COPY . .
 RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /cloud_sql_proxy && chmod +x /cloud_sql_proxy
 
 # Decode and copy the service account key from the base64 argument
-ENV GOOGLE_APPLICATION_CREDENTIALS="GOOGLE_APPLICATION_CREDENTIALS"
+COPY gcloud-credentials.json /secrets/gcloud-credentials.json
+ENV GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcloud-credentials.json"
 
 # Environment variables for the app
 ENV SECRET_KEY=$SECRET_KEY
