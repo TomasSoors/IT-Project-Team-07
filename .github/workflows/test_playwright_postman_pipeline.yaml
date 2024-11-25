@@ -23,7 +23,7 @@ jobs:
 
       - name: Set up Maven
         uses: actions/setup-java@v3
-        with:
+        with: 
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin'
         
@@ -61,11 +61,12 @@ jobs:
       - name: Verify Maven version
         run: mvn -version
 
-      # Stap 3: Installeer afhankelijkh
+      # Stap 3: Installeer afhankelijk
       - name: Install dependencies
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           sudo mvn -B install -D skipTests --no-transfer-progress
+
 
       # Stap 4: Voer Playwright-tests ui
       - name: Run Playwright tests
