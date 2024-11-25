@@ -60,7 +60,7 @@ jobs:
       - name: Verify Maven version
         run: mvn -version
 
-      # Stap 3: Installeer afhankelijkheden
+      # Stap 3: Installeer afhankelijkhede
       - name: Install dependencies
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
