@@ -23,7 +23,7 @@ jobs:
       - name: List directory contents for debugging
         run: |
           ls -R /test-repo
-          
+
       - name: Set up Maven
         uses: actions/setup-java@v3
         with:
@@ -58,7 +58,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          sudo mvn clean install
+          sudo mvn clean install -e
 
       # Stap 4: Voer Playwright-tests uit
       - name: Run Playwright tests
