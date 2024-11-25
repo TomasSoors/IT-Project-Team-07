@@ -50,4 +50,4 @@ jobs:
         with:
           service: 'mutualism-backend'
           region: 'europe-west1'
-          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backen-test:latest'
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test:latest'
