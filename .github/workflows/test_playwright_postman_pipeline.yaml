@@ -26,6 +26,15 @@ jobs:
         with: 
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakelen
+        
+
+      
+      - name: Verify Java and Maven Versions
+        run: |
+          java -version
+          javac -version
+          echo $JAVA_HOME
+          mvn --version
 
       # - name: Install Latest Maven
       #   run: |
