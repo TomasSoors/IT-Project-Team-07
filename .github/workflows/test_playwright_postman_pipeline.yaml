@@ -26,6 +26,8 @@ jobs:
         with: 
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin'
+          cache: maven # Optioneel: cache voor Maven-dependencies inschakelen
+          maven-version: '3.9.5' 
         
       - name: Install Latest Maven
         run: |
