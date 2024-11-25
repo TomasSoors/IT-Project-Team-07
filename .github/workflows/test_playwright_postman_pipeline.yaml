@@ -27,7 +27,7 @@ jobs:
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin'
         
-      name: Install Latest Maven
+      - name: Install Latest Maven
         run: |
           sudo apt-get remove -y maven
           sudo apt-get update
