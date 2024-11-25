@@ -24,9 +24,8 @@ jobs:
       - name: Set up Maven
         uses: actions/setup-java@v3
         with: 
-          java-version: '21' # Kies de juiste versie voor jouw pro
+          java-version: '17' # Kies de juiste versie voor jouw pro
           distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakelen
-          maven-version: '3.9.5' 
         
 
       - name: Set JAVA_HOME
@@ -39,14 +38,14 @@ jobs:
           echo $JAVA_HOME
           mvn --version
 
-      - name: Install Latest Maven
-        run: |
-          sudo apt-get remove -y maven  # Uninstall existing Maven
-          sudo apt-get update
-          wget https://downloads.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
-          sudo tar -xvzf apache-maven-3.9.5-bin.tar.gz -C /opt/
-          sudo rm -f /usr/bin/mvn  # Remove any existing symlink for mvn
-          sudo ln -s /opt/apache-maven-3.9.5/bin/mvn /usr/bin/mvn  # Create new symlink
+      # - name: Install Latest Maven
+      #   run: |
+      #     sudo apt-get remove -y maven  # Uninstall existing Maven
+      #     sudo apt-get update
+      #     wget https://downloads.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
+      #     sudo tar -xvzf apache-maven-3.9.5-bin.tar.gz -C /opt/
+      #     sudo rm -f /usr/bin/mvn  # Remove any existing symlink for mvn
+      #     sudo ln -s /opt/apache-maven-3.9.5/bin/mvn /usr/bin/mvn  # Create new symlink
 
 
       - name: Set up Node.js
