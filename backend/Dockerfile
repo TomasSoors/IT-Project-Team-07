@@ -21,13 +21,12 @@ COPY . .
 RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /cloud_sql_proxy && chmod +x /cloud_sql_proxy
 
 # Decode and copy the service account key from the base64 argument
-COPY buzzwatch-422510-fa25a0e8d442.json /secrets/
-ENV GOOGLE_APPLICATION_CREDENTIALS="/secrets/buzzwatch-422510-fa25a0e8d442.json"
+COPY gcloud-credentials.json /secrets/gcloud-credentials.json
+ENV GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcloud-credentials.json"
 
-# Set environment variables
-ENV SECRET_KEY=6640eac2136b46b05bd536bf4a9e4ba9d7d324dccc2a2e5d73692ba6eb20aab9
-ENV DATABASE_URL=mysql+mysqlconnector://user:userpass@127.0.0.1:3306/userdatabase
-
+# Environment variables for the app
+ENV SECRET_KEY=$SECRET_KEY
+ENV DATABASE_URL=$DATABASE_URL
 # Expose application port
 EXPOSE 8000
 
