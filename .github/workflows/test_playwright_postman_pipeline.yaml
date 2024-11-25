@@ -67,7 +67,7 @@ jobs:
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           sudo mvn -B install -D skipTests --no-transfer-progress
 
-      # Stap 4: Voer Playwright-tests uit
+      # Stap 4: Voer Playwright-tests ui
       - name: Run Playwright tests
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
