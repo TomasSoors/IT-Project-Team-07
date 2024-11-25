@@ -31,9 +31,13 @@ jobs:
       #   run: |
       #     cp "${{ steps.auth.outputs.credentials_file_path }}" ./backend/gcloud-credentials.json
 
-      - name: Write Google Cloud credentials to a file
-        run: |
-          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > ./backend/gcloud-credentials.json
+     - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "./backend/gcloud-credentials.json"
+          json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
 
       - name: Build Docker image
         run: |
