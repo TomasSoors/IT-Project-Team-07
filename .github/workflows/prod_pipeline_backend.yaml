@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -25,7 +26,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-       - name: Encode GCP Service Account Key as Base64
+      - name: Encode GCP Service Account Key as Base64
         run: |
           echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 > gcp-service-account-key.base64
         id: encode_key
