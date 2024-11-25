@@ -63,7 +63,6 @@ jobs:
 
   postman-tests:
     runs-on: ubuntu-latest
-    needs: playwright-tests
     steps:
       # Stap 1: Haal de testrepo op
       - name: Checkout test repository
