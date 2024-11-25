@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, act } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import MobileMapView from '../components/MobileMapView';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
@@ -14,9 +14,7 @@ jest.mock('expo-location', () => ({
 
 // Mock useNavigation
 jest.mock('@react-navigation/native', () => ({
-  useNavigation: () => ({
-    navigate: jest.fn(),
-  }),
+  useNavigation: jest.fn(),
 }));
 
 // Mock data for user location
@@ -26,6 +24,12 @@ const mockLocation = {
     longitude: 4.3517,
   },
 };
+
+// Mock navigation.navigate
+const mockNavigate = jest.fn();
+useNavigation.mockReturnValue({
+  navigate: mockNavigate,
+});
 
 describe('MobileMapView', () => {
   let alertSpy;
@@ -126,6 +130,18 @@ describe('MobileMapView', () => {
     await act(async () => {
       await waitFor(() => {
         expect(queryByTestId('your-location')).toBeNull();
+      });
+    });
+  });
+
+  it('navigates to TreeDetails view when Callout is pressed', async () => {
+    const { getByTestId } = render(<MobileMapView />);
+    await act(async () => {
+      await waitFor(() => {
+        const treeId = sharedData[0].id;
+        const callout = getByTestId(`callout=${treeId}`);
+        fireEvent.press(callout);
+        expect(mockNavigate).toHaveBeenCalledWith('TreeDetails', { tree: sharedData[0] });
       });
     });
   });

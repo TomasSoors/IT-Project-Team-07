@@ -60,7 +60,7 @@ const MobileMapView = () => {
               source={treeIcon}
               style={styles.marker}
             />
-            <Callout onPress={() => navigation.navigate('TreeDetails', { tree })}>
+            <Callout testID={`callout=${tree.id}`} onPress={() => navigation.navigate('TreeDetails', { tree })}>
               <View style={styles.callout}>
                 <Text style={styles.infoText}>
                   <Image source={infoIcon} style={styles.infoImage}/>
