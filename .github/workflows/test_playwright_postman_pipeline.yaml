@@ -8,7 +8,6 @@ on:
 jobs:
   playwright-tests:
     runs-on: ubuntu-latest
-    needs: setup-environment
     steps:
       # Stap 1: Haal de testrepo op
       - name: Checkout app repository
