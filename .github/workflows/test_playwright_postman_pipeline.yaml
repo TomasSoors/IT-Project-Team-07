@@ -53,13 +53,13 @@ jobs:
       # Stap 3: Installeer afhankelijkheden
       - name: Install dependencies
         run: |
-          cd "test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          cd "test-repo/Mutualism-Testing/Sprint 2/Playwright/MutualismWebTesting"
           npm install
 
       # Stap 4: Voer Playwright-tests uit
       - name: Run Playwright tests
         run: |
-          cd "test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          cd "test-repo/Mutualism-Testing/Sprint 2/Playwright/MutualismWebTesting"
           mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
         env:
           CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
@@ -71,12 +71,12 @@ jobs:
       - name: Modify Postman environment file
         run: |
           # Load the Postman environment file
-          ENV_FILE="test-repo/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"  # Adjust this path
+          ENV_FILE="test-repo/Mutualism-Testing/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"  # Adjust this path
           sed -i "s|\"value\": \"http://localhost:8000\"|\"value\": \"${{ env.CLOUD_RUN_URL }}\"|" $ENV_FILE
           echo "Updated Postman environment file with Cloud Run URL"  
 
       # Stap 3: Voer Postman-tests uit
       - name: Run Postman API tests
         run: |
-          newman run "test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
+          newman run "test-repo/Mutualism-Testing/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
             -e "test-repo/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"
