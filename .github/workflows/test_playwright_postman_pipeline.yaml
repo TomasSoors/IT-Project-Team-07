@@ -32,11 +32,11 @@ jobs:
         with:
           node-version: '16'
 
-      # - name: Log in to Google Cloud
-      #   uses: google-github-actions/auth@v1
-      #   id: auth
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Get Cloud Run URL and Set as Env Variable
         run: |
