@@ -33,14 +33,12 @@ jobs:
           name: "./backend/gcloud-credentials.json"
           json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-
       - name: Build test backend Docker image
         run: |
           IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"
           docker build --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
                        --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
                        -t "$IMAGE_NAME" backend
-
 
       - name: Push test backend Docker image to GCR
         run: |
