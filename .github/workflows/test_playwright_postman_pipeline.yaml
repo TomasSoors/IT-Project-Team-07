@@ -26,6 +26,9 @@ jobs:
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakel
       
+      - name: Clean maven cache
+        run: mvn clean
+      
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -36,6 +39,7 @@ jobs:
 
       - name: Verify Maven version
         run: mvn -version
+
 
       # Stap 3: Installeer afhankelijk
       - name: Install dependencies
