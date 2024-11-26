@@ -13,12 +13,10 @@ jobs:
       - name: Checkout app repository
         uses: actions/checkout@v3
       
-      - name: Clone test repository 
+      - name: Clone test repository
         run: |
-          sudo mkdir /test-repo
-          sudo chown -R $USER:$USER "/test-repo"
-          sudo chmod -R u+rw "/test-repo"
-          sudo git clone https://github.com/RobbyWillemsPXL/Mutualism-Testing.git /test-repo
+          mkdir -p $GITHUB_WORKSPACE/test-repo
+          git clone https://github.com/RobbyWillemsPXL/Mutualism-Testing.git $GITHUB_WORKSPACE/test-repo
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
 
@@ -41,21 +39,21 @@ jobs:
       - name: Verify Java version
         run: | 
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          sudo java -version
-          sudo javac -version
+          java -version
+          javac -version
           echo "Java version is $JAVA_HOME"
 
       - name: Verify Maven version
         run: | 
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting" 
-          sudo mvn -version
+          mvn -version
 
 
       # Stap 3: Installeer afhankelij
       - name: Install dependencies
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          sudo mvn -B install -D skipTests --no-transfer-progress -X
+          mvn -B install -D skipTests --no-transfer-progress -X
 
 
       # Stap 4: Voer Playwright-tests ui
