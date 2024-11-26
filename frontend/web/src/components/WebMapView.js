@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap   } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import data from '../../../shared/data';
 import 'leaflet/dist/leaflet.css';
 import { useNavigate } from 'react-router-dom';
@@ -35,16 +35,14 @@ const layers = [
 ];
 const LayerControl = ({ activeLayer, setActiveLayer }) => {
     const map = useMap();
-    const [isOpen, setIsOpen] = useState(false); // State to toggle visibility of options
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        // Update the map tile layer when activeLayer changes
         const tileLayer = L.tileLayer(activeLayer.url, {
             attribution: activeLayer.attribution,
         });
         tileLayer.addTo(map);
 
-        // Cleanup the old layer
         return () => {
             map.eachLayer((layer) => {
                 if (layer.options.attribution === activeLayer.attribution) {
@@ -104,7 +102,7 @@ const LayerControl = ({ activeLayer, setActiveLayer }) => {
                             <button
                                 onClick={() => {
                                     setActiveLayer(layer);
-                                    setIsOpen(false); // Close options after selection
+                                    setIsOpen(false);
                                 }}
                                 style={{
                                     backgroundImage: `url(${layer.preview})`,
@@ -175,16 +173,16 @@ const MapView = () => {
     return (
         <div style={{ height: '100vh', width: '100%', backgroundColor: "#f0eee4" }}>
             <Navbar />
-            <MapContainer 
+            <MapContainer data-testid="map-container"
                 center={[50.95306, 5.352692]} 
                 zoom={16} 
                 style={{ height: "85vh", margin: "10px", border: "4px solid #b2adad", borderRadius: "20px", zIndex: "0" }}
             >
                 <LayerControl activeLayer={activeLayer} setActiveLayer={setActiveLayer} />
-                <TileLayer url={activeLayer.url} attribution={activeLayer.attribution} />
+                <TileLayer data-testid="tile-layer" url={activeLayer.url} attribution={activeLayer.attribution} />
                 {trees.map(tree => (
-                    <Marker testID={`marker-${tree.id}`} key={tree.id} position={[tree.latitude, tree.longitude]} icon={treeIcon}>
-                        <Popup>
+                    <Marker data-testid="marker" key={tree.id} position={[tree.latitude, tree.longitude]} icon={treeIcon}>
+                        <Popup data-testid="popup">
                             <strong>{tree.title}</strong><br />{tree.description}
                         </Popup>
                     </Marker>
