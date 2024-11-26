@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          sudo mvn -B install -D skipTests --no-transfer-progress
+          sudo mvn -B install -D skipTests --no-transfer-progress -X
 
 
       # Stap 4: Voer Playwright-tests ui
