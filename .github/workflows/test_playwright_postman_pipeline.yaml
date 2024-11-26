@@ -28,7 +28,7 @@ jobs:
       
       - name: Clean maven cache
         run: | 
-          cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           mvn clean
       
       - name: Set up Node.js
@@ -38,28 +38,28 @@ jobs:
           
       - name: Verify Java version
         run: | 
-          cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           java -version
           javac -version
           echo "Java version is $JAVA_HOME"
 
       - name: Verify Maven version
         run: | 
-          cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting" 
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting" 
           mvn -version
 
 
       # Stap 3: Installeer afhankelij
       - name: Install dependencies
         run: |
-          cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           mvn -B install -D skipTests --no-transfer-progress -X
 
 
       # Stap 4: Voer Playwright-tests ui
       - name: Run Playwright tests
         run: |
-          cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           sudo mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
         env:
           CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
