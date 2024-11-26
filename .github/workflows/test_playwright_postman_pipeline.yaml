@@ -3,7 +3,7 @@ name: Mutualism CI Pipeline
 on:
   push:
     branches:
-      - main
+      - Development
 
 jobs:
   playwright-tests:
