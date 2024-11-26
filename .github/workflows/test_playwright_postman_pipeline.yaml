@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-java@v3
         with: 
           java-version: '21' # Kies de juiste versie voor jouw pro
-          distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakelen
+          distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakele
         
 
       
