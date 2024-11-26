@@ -1,9 +1,5 @@
 name: pipeline docker build for test environment - frontend
 
-# on:
-#   push:
-#     branches:
-#       - Development
 
 on:
   workflow_run:
