@@ -5,7 +5,7 @@ on:
     workflows:
       - pipeline for test environment - frontend
     types:
-      - completed
+      - success
 
 jobs:
   playwright-postman-tests:
