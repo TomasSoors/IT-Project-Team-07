@@ -57,7 +57,7 @@ jobs:
 
       - name: Get Cloud Run URL and Set as Env Variable
         run: |
-          SERVICE_NAME="mutualism-backend"
+          SERVICE_NAME="mutualism-frontend"
           REGION="europe-west1"
           PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
           URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
