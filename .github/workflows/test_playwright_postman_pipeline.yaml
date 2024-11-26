@@ -2,16 +2,14 @@ name: Mutualism CI test Pipeline playwright
 
 on:
   workflow_run:
-    workflows:
-      - pipeline for test environment - frontend
+    workflows: ["pipeline for test environment - frontend"]
     types:
-      - completed
+      - success
 
 jobs:
   playwright-postman-tests:
     runs-on: ubuntu-latest
     steps:
-      # Stap 1: Haal de testrepo op
       - name: Checkout app repository
         uses: actions/checkout@v3
       
@@ -50,15 +48,11 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  
 
-
-      # Stap 3: Installeer afhankeli
       - name: Install dependencies
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           mvn -B install -D skipTests --no-transfer-progress -X        
 
-
-      # Stap 4: Voer Playwright-tests ui
       - name: Run Playwright tests
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
@@ -78,7 +72,6 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} 
 
-
       - name: Install Newman
         run: npm install -g newman
 
@@ -90,7 +83,6 @@ jobs:
           echo "Updated Postman environment file with Cloud Run URL"  
           cat "$ENV_FILE"
 
-      # Stap 3: Voer Postman-tests uit
       - name: Run Postman API tests
         run: |
           newman run "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
