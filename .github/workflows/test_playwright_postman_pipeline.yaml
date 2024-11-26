@@ -36,7 +36,7 @@ jobs:
         id: auth
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-
+# 
       - name: Get Cloud Run URL and Set as Env Variable
         run: |
           SERVICE_NAME="mutualism-frontend"
