@@ -3,7 +3,7 @@ name: Mutualism CI Pipeline
 on:
   push:
     branches:
-      - Development
+      - main
 
 jobs:
   playwright-tests:
@@ -48,7 +48,7 @@ jobs:
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting" 
           mvn -version
 
-          
+
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
         id: auth
@@ -67,7 +67,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  
 
 
-      # Stap 3: Installeer afhankelij
+      # Stap 3: Installeer afhankeli
       - name: Install dependencies
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
