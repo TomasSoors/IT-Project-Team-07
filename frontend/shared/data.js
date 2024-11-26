@@ -18,9 +18,7 @@ const data = {
   // Toevoegen van bomen via bestand
   async addTree(tree) {
     try {
-        const token = sessionStorage.getItem('token');
-        const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
-        
+        const token = sessionStorage.getItem('token');        
         const response = await fetch(`http://${baseUrl}:8000/trees`, {
           method: 'POST',
           headers: {
