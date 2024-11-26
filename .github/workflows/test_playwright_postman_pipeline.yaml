@@ -72,12 +72,14 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           mvn -B install -D skipTests --no-transfer-progress -X
+          
 
 
       # Stap 4: Voer Playwright-tests ui
       - name: Run Playwright tests
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          npx playwright install --with-deps
           mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
         env:
           CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
