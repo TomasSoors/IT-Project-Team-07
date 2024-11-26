@@ -2,9 +2,10 @@ name: pipeline docker build for test environment - backend
 
 
 on:
-  push:
+  pull_request:
     branches:
-      - main
+      - Test
+  
 
 jobs:
   build-and-push-backend-test:

@@ -1,11 +1,5 @@
 name: pipeline for test environment - backend
 
-# on:
-#   push:
-#     branches:
-#       - Development
-
-
 on:
   workflow_run:
     workflows:

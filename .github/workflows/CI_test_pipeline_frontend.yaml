@@ -1,17 +1,13 @@
 name: pipeline docker build for test environment - frontend
 
 
-# on:
-#   workflow_run:
-#     workflows:
-#       - pipeline for test environment - backend
-#     types:
-#       - completed
-
 on:
-  push:
-    branches:
-      - Development
+  workflow_run:
+    workflows:
+      - pipeline for test environment - backend
+    types:
+      - completed
+
 
 
 jobs:

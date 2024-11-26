@@ -1,9 +1,11 @@
 name: Mutualism CI test Pipeline playwright
 
 on:
-  push:
-    branches:
-      - Development
+  workflow_run:
+    workflows:
+      - pipeline for test environment - frontend
+    types:
+      - completed
 
 jobs:
   playwright-tests:
