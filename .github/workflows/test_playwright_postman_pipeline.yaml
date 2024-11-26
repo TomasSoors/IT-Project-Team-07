@@ -25,29 +25,11 @@ jobs:
         with: 
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakel
-      
-      - name: Clean maven cache
-        run: | 
-          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          mvn clean
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version:  lts/*
-          
-      - name: Verify Java version
-        run: | 
-          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          java -version
-          javac -version
-          echo "Java version is $JAVA_HOME"
-
-      - name: Verify Maven version
-        run: | 
-          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting" 
-          mvn -version
-
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
@@ -79,7 +61,7 @@ jobs:
       - name: Run Playwright tests
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps
+          mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"
           mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chromium -Dheadless=true
         env:
           CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
