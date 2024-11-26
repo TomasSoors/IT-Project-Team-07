@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import MobileMapView from '../components/MobileMapView';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
-import sharedData from '../../shared/data';
+import data from '../../shared/data';
 import { useNavigation } from '@react-navigation/native';
 
 // Mock the Location module and Alert
@@ -17,6 +17,13 @@ jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
 }));
 
+jest.mock('../../shared/data', () => ({
+  getTrees: jest.fn(),
+}));
+const mockTrees = [
+  { id: 1, name: 'Tree 1', latitude: 50.8503, longitude: 4.3517 },
+  { id: 2, name: 'Tree 2', latitude: 50.851, longitude: 4.352 },
+];
 // Mock data for user location
 const mockLocation = {
   coords: {
@@ -25,6 +32,7 @@ const mockLocation = {
   },
 };
 
+let trees = []
 // Mock navigation.navigate
 const mockNavigate = jest.fn();
 useNavigation.mockReturnValue({
@@ -37,6 +45,7 @@ describe('MobileMapView', () => {
   beforeEach(() => {
     Location.requestForegroundPermissionsAsync.mockResolvedValue({ status: 'granted' });
     Location.getCurrentPositionAsync.mockResolvedValue(mockLocation);
+    data.getTrees.mockResolvedValue(mockTrees);
     alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
   });
 
@@ -70,8 +79,8 @@ describe('MobileMapView', () => {
   it('renders shared data markers', async () => {
     const { getByTestId } = render(<MobileMapView />);
     await act(async () => {
-      await waitFor(() => {
-        sharedData.forEach(tree => {
+      await waitFor(() => {        
+        mockTrees.forEach(tree => {
           expect(getByTestId(`marker-${tree.id}`)).toBeTruthy();
         });
       });
@@ -138,10 +147,10 @@ describe('MobileMapView', () => {
     const { getByTestId } = render(<MobileMapView />);
     await act(async () => {
       await waitFor(() => {
-        const treeId = sharedData[0].id;
+        const treeId = mockTrees[0].id;
         const callout = getByTestId(`callout=${treeId}`);
         fireEvent.press(callout);
-        expect(mockNavigate).toHaveBeenCalledWith('TreeDetails', { tree: sharedData[0] });
+        expect(mockNavigate).toHaveBeenCalledWith('TreeDetails', { tree: mockTrees[0] });
       });
     });
   });

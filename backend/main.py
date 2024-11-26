@@ -6,8 +6,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from models import User, RevokedToken
-from database import get_db
+from models import User, RevokedToken, Tree
+from database import SessionLocal, get_db
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -51,6 +51,12 @@ def standard_response(success: bool, message: str, data: dict | None = None):
 class UserCreate(BaseModel):
     username: str
     password: str
+
+class TreeCreate(BaseModel):
+    name: str
+    description: str | None = None
+    latitude: float
+    longitude: float
 
 def get_user_by_username(db: Session, username: str):
     return db.query(User).filter(User.username == username).first()
@@ -160,3 +166,30 @@ def revoke_user_token(token: str, db: Session = Depends(get_db)):
             status_code=e.status_code,
             detail=standard_response(False, e.detail)
         )
+    
+@app.get("/trees")
+def get_trees(db: Session = Depends(get_db)):
+    trees = db.query(Tree).all()
+    return trees
+
+@app.post("/trees")
+def create_tree(tree: TreeCreate, db: Session = Depends(get_db)):
+    db_tree = Tree(
+        name=tree.name,
+        description=tree.description,
+        latitude=tree.latitude,
+        longitude=tree.longitude,
+    )
+    db.add(db_tree)
+    db.commit()
+    db.refresh(db_tree)
+    return db_tree
+
+@app.delete("/trees/{tree_id}")
+def delete_tree(tree_id: int, db: Session = Depends(get_db)):
+    db_tree = db.query(Tree).filter(Tree.id == tree_id).first()
+    if not db_tree:
+        raise HTTPException(status_code=404, detail="Tree not found")
+    db.delete(db_tree)
+    db.commit()
+    return {"message": "Tree deleted successfully"}
