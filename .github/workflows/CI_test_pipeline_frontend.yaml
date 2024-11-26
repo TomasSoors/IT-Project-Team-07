@@ -1,13 +1,18 @@
-name: pipeline for production environment - frontend
+name: pipeline docker build for test environment - frontend
+
+# on:
+#   push:
+#     branches:
+#       - Development
 
 on:
   push:
     branches:
-      - Development
+      - main
 
 
 jobs:
-  build-and-push:
+  build-and-push-frontend-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -49,9 +54,4 @@ jobs:
           IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-frontend-test"  
           docker push "$IMAGE_NAME"
 
-      - name: 'deploy production frontend'
-        uses: 'google-github-actions/deploy-cloudrun@v2'
-        with:
-          service: 'mutualism-frontend'
-          region: 'europe-west1'
-          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-frontend-test:latest'
+     
