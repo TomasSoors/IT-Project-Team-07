@@ -43,8 +43,8 @@ jobs:
           REGION="europe-west1"
           PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
           URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
-          echo "Cloud Run URL is: $URL"
-          echo "CLOUD_RUN_URL=$URL" >> $GITHUB_ENV
+          echo "Cloud Run URL is: $URL "
+          echo "CLOUD_RUN_URL=$URL + '/'" >> $GITHUB_ENV
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  
 
