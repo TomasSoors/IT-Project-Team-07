@@ -1,13 +1,15 @@
-const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
+const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost:8000';
 
 const data = {
   // Ophalen van alle bomen
-  async getTrees() {
+  async getTrees(mobile) {
     try {
-      const response = await fetch(`http://${baseUrl}/trees`, {
+      const url = mobile ? '10.0.2.2:8000' : `${baseUrl}`;
+      const response = await fetch(`http://${url}/trees`, {
         method: 'GET',
       });
       if (!response.ok) throw new Error('Failed to fetch trees.');
+      let tre = await response.json()      
       return await response.json();
     } catch (error) {
       console.error('Error fetching trees:', error);
@@ -18,7 +20,9 @@ const data = {
   // Toevoegen van bomen via bestand
   async addTree(tree) {
     try {
-        const token = sessionStorage.getItem('token');        
+        const token = sessionStorage.getItem('token');
+        const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
+        
         const response = await fetch(`http://${baseUrl}:8000/trees`, {
           method: 'POST',
           headers: {
