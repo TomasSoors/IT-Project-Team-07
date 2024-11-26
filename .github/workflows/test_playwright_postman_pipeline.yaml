@@ -48,6 +48,24 @@ jobs:
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting" 
           mvn -version
 
+          
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Get Cloud Run URL and Set as Env Variable
+        run: |
+          SERVICE_NAME="mutualism-backend"
+          REGION="europe-west1"
+          PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
+          URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
+          echo "Cloud Run URL is: $URL"
+          echo "CLOUD_RUN_URL=$URL" >> $GITHUB_ENV
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  
+
 
       # Stap 3: Installeer afhankelij
       - name: Install dependencies
@@ -60,23 +78,23 @@ jobs:
       - name: Run Playwright tests
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          sudo mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
+          mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
         env:
           CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
 
       # Stap 2: Installeer Newman
       - name: Install Newman
-        run: sudo npm install -g newman
+        run: npm install -g newman
 
       - name: Modify Postman environment file
         run: |
           # Load the Postman environment file
-          ENV_FILE="/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"  # Adjust this path
-          sudo sed -i "s|\"value\": \"http://localhost:8000\"|\"value\": \"${{ env.CLOUD_RUN_URL }}\"|" $ENV_FILE
+          ENV_FILE="$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"  # Adjust this path
+          sed -i "s|\"value\": \"http://localhost:8000\"|\"value\": \"${{ env.CLOUD_RUN_URL }}\"|" $ENV_FILE
           echo "Updated Postman environment file with Cloud Run URL"  
 
       # Stap 3: Voer Postman-tests uit
       - name: Run Postman API tests
         run: |
-          sudo newman run "/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
+          newman run "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
             -e "/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"
