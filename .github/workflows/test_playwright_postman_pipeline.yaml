@@ -23,8 +23,8 @@ jobs:
       - name: Set up Maven
         uses: actions/setup-java@v3
         with: 
-          java-version: '21' # Kies de juiste versie voor jouw pro
-          distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakel
+          java-version: '21' 
+          distribution: 'temurin' 
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
