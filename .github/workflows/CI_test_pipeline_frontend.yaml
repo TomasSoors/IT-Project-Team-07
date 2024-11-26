@@ -6,7 +6,7 @@ on:
     workflows:
       - pipeline for test environment - backend
     types:
-      - completed
+      - success
 
 
 

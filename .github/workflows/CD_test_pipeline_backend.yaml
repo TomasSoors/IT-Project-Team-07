@@ -5,18 +5,12 @@ on:
     workflows:
       - pipeline docker build for test environment - backend
     types:
-      - completed
+      - success
 
 jobs:
   deploy-backend-test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout specific branch 
-        uses: actions/checkout@v3
-        with:
-          ref: 'Development'
-
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
         id: auth
