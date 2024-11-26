@@ -1,4 +1,4 @@
-name: Mutualism CI Pipeline
+name: Mutualism CI test Pipeline playwright
 
 on:
   push:
@@ -80,7 +80,7 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           npx playwright install --with-deps
-          mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
+          mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome -Dheadless=true
         env:
           CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
 
