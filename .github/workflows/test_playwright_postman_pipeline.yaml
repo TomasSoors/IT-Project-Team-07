@@ -40,6 +40,8 @@ jobs:
         run: | 
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
           java -version
+          javac -version
+          echo "Java version is $JAVA_HOME"
 
       - name: Verify Maven version
         run: | 
