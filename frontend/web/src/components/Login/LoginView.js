@@ -20,8 +20,8 @@ const Login = () => {
     formDetails.append('password', password);
 
     try {
-      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
-      const response = await fetch(`http://${baseUrl}:8000/login`, {
+      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+      const response = await fetch(`${baseUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
