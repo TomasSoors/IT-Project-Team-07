@@ -2,7 +2,7 @@ name: Mutualism CI test Pipeline playwright
 
 on:
   workflow_run:
-    workflows: ["pipeline for test environment - frontend"]
+    workflows: ["pipeline for test environment"]
     types:
       - completed
 

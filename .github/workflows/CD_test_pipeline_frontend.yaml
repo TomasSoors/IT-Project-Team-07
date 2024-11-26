@@ -1,4 +1,4 @@
-name: pipeline for test environment - frontend
+name: pipeline for test environment
 
 on:
   workflow_run:
