@@ -8,7 +8,7 @@ name: pipeline docker build for test environment - backend
 on:
   push:
     branches:
-      - main
+      - development
 
 jobs:
   build-and-push-backend-test:

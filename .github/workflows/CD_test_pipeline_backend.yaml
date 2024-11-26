@@ -7,9 +7,11 @@ name: pipeline for test environment - backend
 
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - pipeline docker build for test environment - frontend
+    types:
+      - completed
 
 jobs:
   deploy-backend-test:
