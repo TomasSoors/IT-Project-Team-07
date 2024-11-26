@@ -39,14 +39,14 @@ jobs:
       - name: Verify Java version
         run: | 
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
-          java -version
-          javac -version
+          sudo java -version
+          sudo javac -version
           echo "Java version is $JAVA_HOME"
 
       - name: Verify Maven version
         run: | 
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting" 
-          mvn -version
+          sudo mvn -version
 
 
       # Stap 3: Installeer afhankelij
