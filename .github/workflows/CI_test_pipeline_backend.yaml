@@ -1,6 +1,5 @@
 name: pipeline docker build for test environment - backend
 
-
 on:
   push:
     branches:
