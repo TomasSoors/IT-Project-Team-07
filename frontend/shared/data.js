@@ -1,4 +1,4 @@
-const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost:8000';
+const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
 
 const data = {
   // Ophalen van alle bomen
