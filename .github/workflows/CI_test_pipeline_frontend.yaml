@@ -3,8 +3,7 @@ name: pipeline docker build for test environment - frontend
 
 on:
   workflow_run:
-    workflows:
-      - pipeline for test environment - backend
+    workflows: [pipeline for test environment - backend]
     types:
       - success
 
