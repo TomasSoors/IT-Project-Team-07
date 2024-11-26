@@ -1,29 +1,29 @@
-name: pipeline for test environment - backend
+# name: pipeline for test environment - backend
 
-on:
-  workflow_run:
-    workflows: ["pipeline docker build for test environment - backend"]
-    types:
-      - completed
+# on:
+#   workflow_run:
+#     workflows: ["pipeline docker build for test environment - backend"]
+#     types:
+#       - completed
 
-jobs:
-  deploy-backend-test:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps:
-      - name: Log in to Google Cloud
-        uses: google-github-actions/auth@v1
-        id: auth
-        with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+# jobs:
+#   deploy-backend-test:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+#     steps:
+#       - name: Log in to Google Cloud
+#         uses: google-github-actions/auth@v1
+#         id: auth
+#         with:
+#           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
       
-      - name: Configure Docker to use Google Cloud credentials
-        run: |
-          gcloud auth configure-docker europe-west1-docker.pkg.dev
+#       - name: Configure Docker to use Google Cloud credentials
+#         run: |
+#           gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-      - name: 'deploy production backend'
-        uses: 'google-github-actions/deploy-cloudrun@v2'
-        with:
-          service: 'mutualism-backend'
-          region: 'europe-west1'
-          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test:latest'
+#       - name: 'deploy production backend'
+#         uses: 'google-github-actions/deploy-cloudrun@v2'
+#         with:
+#           service: 'mutualism-backend'
+#           region: 'europe-west1'
+#           image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test:latest'
