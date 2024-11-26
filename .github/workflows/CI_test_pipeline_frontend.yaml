@@ -1,12 +1,17 @@
 name: pipeline docker build for test environment - frontend
 
 
+# on:
+#   workflow_run:
+#     workflows:
+#       - pipeline for test environment - backend
+#     types:
+#       - completed
+
 on:
-  workflow_run:
-    workflows:
-      - pipeline for test environment - backend
-    types:
-      - completed
+  push:
+    branches:
+      - Development
 
 
 jobs:
@@ -37,7 +42,7 @@ jobs:
           PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
           URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
           echo "Cloud Run URL is: $URL"
-          sudo echo "CLOUD_RUN_URL=$URL" >> frontend/web/.env
+          echo "REACT_APP_EXTERNAL_IP=$URL" >> frontend/web/.env
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} 
 
