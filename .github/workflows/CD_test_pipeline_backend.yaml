@@ -6,7 +6,7 @@ name: pipeline for test environment - backend
 #       - Development
 
 
- on:
+on:
   push:
     branches:
       - main
