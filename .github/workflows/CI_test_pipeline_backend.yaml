@@ -1,0 +1,55 @@
+name: pipeline docker build for test environment - backend
+
+
+on:
+  push:
+    branches:
+      - Development
+
+jobs:
+  build-and-push-backend-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      
+      - name: Configure Docker to use Google Cloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      # - name: Copy Google Cloud Credentials
+      #   run: |
+      #     cp "${{ steps.auth.outputs.credentials_file_path }}" ./backend/gcloud-credentials.json
+
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "./backend/gcloud-credentials.json"
+          json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+
+      - name: Build test backend Docker image
+        run: |
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"
+          docker build --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+                       --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+                       -t "$IMAGE_NAME" backend
+
+
+      - name: Push test backend Docker image to GCR
+        run: |
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"  
+          docker push "$IMAGE_NAME"
+
+    

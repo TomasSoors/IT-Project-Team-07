@@ -1,0 +1,70 @@
+name: Mutualism CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  playwright-tests:
+    runs-on: ubuntu-latest
+    steps:
+      # Stap 1: Haal de testrepo op
+      - name: Checkout app repository
+        uses: actions/checkout@v3
+      
+      - name: Clone test repository 
+        run: |
+          sudo mkdir /test-repo
+          sudo git clone https://github.com/RobbyWillemsPXL/Mutualism-Testing.git /test-repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+
+      # - name: Set up Maven
+      #   uses: actions/setup-java@v3
+      #   with: 
+      #     java-version: '21' # Kies de juiste versie voor jouw pro
+      #     distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakel
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version:  lts/*
+      
+      - name: Verify Java version
+        run: java -version
+
+      - name: Verify Maven version
+        run: mvn -version
+
+      # Stap 3: Installeer afhankelijk
+      - name: Install dependencies
+        run: |
+          cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          sudo mvn -B install -D skipTests --no-transfer-progress
+
+
+      # Stap 4: Voer Playwright-tests ui
+      - name: Run Playwright tests
+        run: |
+          cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          sudo mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chrome
+        env:
+          CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
+
+      # Stap 2: Installeer Newman
+      - name: Install Newman
+        run: sudo npm install -g newman
+
+      - name: Modify Postman environment file
+        run: |
+          # Load the Postman environment file
+          ENV_FILE="/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"  # Adjust this path
+          sudo sed -i "s|\"value\": \"http://localhost:8000\"|\"value\": \"${{ env.CLOUD_RUN_URL }}\"|" $ENV_FILE
+          echo "Updated Postman environment file with Cloud Run URL"  
+
+      # Stap 3: Voer Postman-tests uit
+      - name: Run Postman API tests
+        run: |
+          sudo newman run "/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
+            -e "/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing env.postman_environment.json"

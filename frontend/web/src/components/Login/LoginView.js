@@ -13,7 +13,7 @@ const Login = () => {
   const [error, setError] = useState(null);  // State voor foutmeldingen
   const navigate = useNavigate();
 
-  const handleLogin = async () => {  
+  const handleLogin = async () => {
     // Controleer of beide velden zijn ingevuld
     if (!username || !password) {
       setError('Vul zowel gebruikersnaam als wachtwoord in.');
@@ -25,8 +25,8 @@ const Login = () => {
     formDetails.append('password', password);
 
     try {
-      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
-      const response = await fetch(`http://${baseUrl}:8000/login`, {
+      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+      const response = await fetch(`${baseUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -55,47 +55,31 @@ const Login = () => {
 
   return (
     <div className="body-container">
-    <div className="login-container">
-      <img src='logopxlboom.png' alt="logo"></img>
-      <h2>Login</h2>
-      <label htmlFor='username'>Username</label>
-      <input
-        id="username"
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        style={{
-          display: 'block',
-          width: '100%',
-          padding: '10px',
-          marginBottom: '20px',
-          borderRadius: '10px',
-          border: '1px solid #ccc',
-        }}
-      />
-      <label htmlFor='password'>Password</label>
-      <input
-        id="password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{
-          display: 'block',
-          width: '100%',
-          padding: '10px',
-          marginBottom: '40px',
-          borderRadius: '10px',
-          border: '1px solid #ccc',
-        }}
-      />
-      {error && <p style={{ color: 'red', marginBottom: '40px' }}>{error}</p>}
-      <button onClick={handleLogin} style={{fontWeight: 'bold', width: '50%', padding: '10px', marginBottom: '10px', backgroundColor: '#A9907E', color: '#F3DEBA', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-        Login
-      </button>
-      <button onClick={handleGuest} style={{fontWeight: 'bold', width: '50%', padding: '10px', backgroundColor: '#F3DEBA', border: '2px solid #A9907E', color: '#A9907E', borderRadius: '4px', cursor: 'pointer' }}>
-        Ga verder als gast
-      </button>
-    </div>
+      <div className="login-container">
+        <img src='logopxlboom.png' alt="logo" />
+        <h2>Login</h2>
+        <label htmlFor='username'>Username</label>
+        <input
+          id="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <label htmlFor='password'>Password</label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <div className="error-message">{error}</div>
+        <button className="login-button" onClick={handleLogin}>
+          Login
+        </button>
+        <button className="guest-button" onClick={handleGuest}>
+          Ga verder als gast
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,39 @@
+name: pipeline for test environment - backend
+
+# on:
+#   push:
+#     branches:
+#       - Development
+
+
+on:
+  workflow_run:
+    workflows:
+      - pipeline docker build for test environment - frontend
+    types:
+      - completed
+
+jobs:
+  deploy-backend-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      
+      - name: Configure Docker to use Google Cloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: 'deploy production backend'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'mutualism-backend'
+          region: 'europe-west1'
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test:latest'
