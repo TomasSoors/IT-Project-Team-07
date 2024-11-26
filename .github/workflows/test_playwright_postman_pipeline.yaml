@@ -3,7 +3,7 @@ name: Mutualism CI Pipeline
 on:
   push:
     branches:
-      - main
+      - Development
 
 jobs:
   playwright-tests:
@@ -20,55 +20,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
 
-
       - name: Set up Maven
         uses: actions/setup-java@v3
         with: 
           java-version: '21' # Kies de juiste versie voor jouw pro
           distribution: 'temurin' # Optioneel: cache voor Maven-dependencies inschakele
-        
-
       
-      
-
-      # - name: Install Latest Maven
-      #   run: |
-      #     sudo apt-get remove -y maven  # Uninstall existing Maven
-      #     sudo apt-get update
-      #     wget https://downloads.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
-      #     sudo tar -xvzf apache-maven-3.9.5-bin.tar.gz -C /opt/
-      #     sudo rm -f /usr/bin/mvn  # Remove any existing symlink for mvn
-      #     sudo ln -s /opt/apache-maven-3.9.5/bin/mvn /usr/bin/mvn  # Create new symlink
-
-      # - name: Verify Java and Maven Versions
-      #   run: |
-      #     java -version
-      #     javac -version
-      #     echo $JAVA_HOME
-      #     mvn --version
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version:  lts/*
-
-      # - name: Log in to Google Cloud
-      #   uses: google-github-actions/auth@v1
-      #   id: auth
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-
-      # - name: Get Cloud Run URL and Set as Env Variable
-      #   run: |
-      #     SERVICE_NAME="mutualism-backend"
-      #     REGION="europe-west1"
-      #     PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
-      #     URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
-      #     echo "Cloud Run URL is: $URL"
-      #     echo "CLOUD_RUN_URL=$URL" >> $GITHUB_ENV
-      #   env:
-      #     GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  
-
       
       - name: Verify Java version
         run: java -version
