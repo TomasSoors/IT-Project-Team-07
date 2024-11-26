@@ -1,14 +1,10 @@
 name: pipeline docker build for test environment - backend
 
-# on:
-#   push:
-#     branches:
-#       - Development
 
 on:
   push:
     branches:
-      - development
+      - Development
 
 jobs:
   build-and-push-backend-test:
