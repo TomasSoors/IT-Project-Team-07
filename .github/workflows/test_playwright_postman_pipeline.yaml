@@ -4,11 +4,12 @@ on:
   workflow_run:
     workflows: ["pipeline for test environment - frontend"]
     types:
-      - success
+      - completed
 
 jobs:
   playwright-postman-tests:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout app repository
         uses: actions/checkout@v3

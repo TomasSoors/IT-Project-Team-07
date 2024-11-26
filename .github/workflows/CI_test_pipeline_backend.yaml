@@ -3,7 +3,7 @@ name: pipeline docker build for test environment - backend
 on:
   push:
     branches:
-      - Development
+      - main
 
 jobs:
   build-and-push-backend-test:

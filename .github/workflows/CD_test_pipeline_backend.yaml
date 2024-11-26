@@ -4,11 +4,12 @@ on:
   workflow_run:
     workflows: ["pipeline docker build for test environment - backend"]
     types:
-      - success
+      - completed
 
 jobs:
   deploy-backend-test:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
