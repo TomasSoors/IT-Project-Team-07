@@ -1,5 +1,6 @@
 import React from 'react';
-import "./TreeDetail.css";
+import PropTypes from 'prop-types';
+import './TreeDetail.css';
 
 const TreeDetail = ({ selectedTree, onClose }) => {
     return (
@@ -7,7 +8,11 @@ const TreeDetail = ({ selectedTree, onClose }) => {
             <div className="card">
                 <div className="content">
                     <button onClick={onClose} className="close-button">
-                        <img style={{width:"30px", height:"30px"}} src="close.png" alt="Close" />
+                        <img
+                            style={{ width: "30px", height: "30px" }}
+                            src="close.png"
+                            alt="Close"
+                        />
                     </button>
                     <img
                         src="tree-icon.png"
@@ -33,6 +38,21 @@ const TreeDetail = ({ selectedTree, onClose }) => {
             </div>
         </div>
     );
-}
+};
+
+TreeDetail.propTypes = {
+    selectedTree: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        description: PropTypes.string,
+        height: PropTypes.number.isRequired,
+        latitude: PropTypes.number.isRequired,
+        longitude: PropTypes.number.isRequired,
+    }),
+    onClose: PropTypes.func.isRequired,
+};
+
+TreeDetail.defaultProps = {
+    selectedTree: null,
+};
 
 export default TreeDetail;

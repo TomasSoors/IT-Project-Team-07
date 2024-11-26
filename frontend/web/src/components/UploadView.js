@@ -4,15 +4,15 @@ import data from '../../../shared/data';
 import Navbar from './Navbar/Navbar';
 
 function UploadView() {
-  const [fileContent, setFileContent] = useState(null);
   const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
-  
+
+  // Tokenverificatie bij component-mount
   useEffect(() => {
     const verifyToken = async () => {
       const token = sessionStorage.getItem("token");
       if (!token) {
-        navigate("/");
+        return navigate("/");
       }
 
       try {
@@ -21,13 +21,11 @@ function UploadView() {
           method: "GET",
         });
 
-        if (response.ok) {
-          return;
-        } else {
+        if (!response.ok) {
           navigate("/");
         }
       } catch (error) {
-        console.error("Er is een fout opgetreden bij het verifiëren van de token: ", error)
+        console.error("Tokenverificatie mislukt: ", error);
         navigate("/");
       }
     };
@@ -35,10 +33,7 @@ function UploadView() {
     verifyToken();
   }, [navigate]);
 
-  const validateArray = (array) => {
-
-  }
-
+  // Bestandsvalidatie en verwerking
   const handleFile = (file) => {
     setErrors([]);
     if (file && file.type === 'application/json') {
@@ -46,11 +41,12 @@ function UploadView() {
       reader.onload = (event) => {
         try {
           const response = JSON.parse(event.target.result);
+
           if (Array.isArray(response)) {
-            let newErrors = [];
+            const newErrors = [];
             const validTrees = response.filter((tree, index) => {
               const treeErrors = [];
-              
+
               if (!tree.name) {
                 treeErrors.push(`Boom met index ${index}: Naam ontbreekt.`);
               }
@@ -61,21 +57,21 @@ function UploadView() {
                 typeof tree.position[0] !== 'number' ||
                 typeof tree.position[1] !== 'number'
               ) {
-                treeErrors.push(`Boom met index ${index}: De positie ontbreekt of is ongeldig.`);
+                treeErrors.push(`Boom met index ${index}: Ongeldige positie.`);
               }
               if (!tree.description) {
-                treeErrors.push(`Boom met index ${index}: De beschrijving ontbreekt.`);
+                treeErrors.push(`Boom met index ${index}: Beschrijving ontbreekt.`);
               }
-              
+
               if (treeErrors.length > 0) {
-                  newErrors.push(...treeErrors);
+                newErrors.push(...treeErrors);
                 return false;
               }
               return true;
             });
-  
+
             setErrors(newErrors);
-  
+
             if (validTrees.length > 0) {
               validTrees.forEach(tree => {
                 const [latitude, longitude] = tree.position;
@@ -87,27 +83,19 @@ function UploadView() {
                 });
               });
               navigate('/map');
-            }
-            else if(newErrors.length === 0) {
+            } else if (newErrors.length === 0) {
               setErrors(['Het JSON-bestand bevat geen geldige bomen.']);
             }
           }
         } catch (err) {
           setErrors(['Er is een fout opgetreden bij het lezen van het JSON-bestand.']);
-          setFileContent(null);
         }
       };
       reader.readAsText(file);
     } else {
       setErrors(['Selecteer een geldig JSON-bestand.']);
-      setFileContent(null);
     }
   };
-  
-  
-
-
-
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -125,7 +113,7 @@ function UploadView() {
       backgroundColor: "#f0eee4", 
       height: "100vh",
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
     }}>
       <Navbar />
       <div style={{
@@ -133,7 +121,7 @@ function UploadView() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '20px'
+        padding: '20px',
       }}>
         <div
           onDrop={handleDrop}
@@ -150,7 +138,7 @@ function UploadView() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           <p>Sleep je JSON-bestand hierheen of</p>
@@ -165,32 +153,16 @@ function UploadView() {
           </label>
 
           {errors.length > 0 && (
-          <ul style={{ color: 'red', textAlign: 'left', overflowX: 'auto'}}>
-          {errors.map((error, index) => (
-          <li key={index}>{error}</li>
-          ))}
-          </ul>
-          )}
-
-
-          {fileContent && (
-            <pre style={{
-              background: '#f8f8f8',
-              padding: '20px',
-              borderRadius: '5px',
-              textAlign: 'left',
-              marginTop: '20px',
-              maxWidth: '100%',
-              overflowX: 'auto'
-            }}>
-              {JSON.stringify(fileContent, null, 2)}
-            </pre>
+            <ul style={{ color: 'red', textAlign: 'left', overflowX: 'auto' }}>
+              {errors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
           )}
         </div>
       </div>
     </div>
   );
-
 }
 
 export default UploadView;

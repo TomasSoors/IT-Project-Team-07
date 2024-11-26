@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import data from '../../../../shared/data';
 import 'leaflet/dist/leaflet.css';
 import Navbar from '../Navbar/Navbar';
 import "./WebMapView.css";
 import L from 'leaflet';
-import { useNavigate } from 'react-router-dom';
-import TreeDetail from '../TreeDetail/TreeDetail';
+import PropTypes from 'prop-types';
 import DynamicMarker from '../DynamicMarker/DynamicMarker';
-
+import TreeDetail from '../TreeDetail/TreeDetail';
 
 const layers = [
     {
@@ -30,6 +29,7 @@ const layers = [
         preview: 'https://tile.thunderforest.com/cycle/12/2048/1360.png?apikey=effe903119e1476883987eec6dfc2a5b',
     },
 ];
+
 const LayerControl = ({ activeLayer, setActiveLayer }) => {
     const map = useMap();
     const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +58,6 @@ const LayerControl = ({ activeLayer, setActiveLayer }) => {
                 zIndex: 1000,
             }}
         >
-            {/* Main Button */}
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(!isOpen)}
@@ -75,7 +74,6 @@ const LayerControl = ({ activeLayer, setActiveLayer }) => {
                 </button>
             )}
 
-            {/* Options */}
             {isOpen && (
                 <div
                     style={{
@@ -87,9 +85,9 @@ const LayerControl = ({ activeLayer, setActiveLayer }) => {
                         textAlign: 'center',
                     }}
                 >
-                    {layers.map((layer, index) => (
+                    {layers.map((layer) => (
                         <div
-                            key={index}
+                            key={layer.name}  // Use unique `name` as key
                             style={{
                                 display: 'inline-block',
                                 margin: '5px',
@@ -132,44 +130,27 @@ const LayerControl = ({ activeLayer, setActiveLayer }) => {
     );
 };
 
+LayerControl.propTypes = {
+    activeLayer: PropTypes.object.isRequired,
+    setActiveLayer: PropTypes.func.isRequired,
+};
+
 const MapView = () => {
     const [trees, setTrees] = useState([]);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [activeLayer, setActiveLayer] = useState(layers[0]);
-    const navigate = useNavigate();
     const [center] = useState([50.95306, 5.352692]);
     const [zoom] = useState(16);
     const [selectedTree, setSelectedTree] = useState(null);
+
     useEffect(() => {
         const fetchTrees = async () => {
-          const fetchedTrees = await data.getTrees();
-          setTrees(fetchedTrees);
+            const fetchedTrees = await data.getTrees();
+            setTrees(fetchedTrees);
         };
-    
-        const verifyToken = async () => {
-          const token = sessionStorage.getItem('token');
-          if (!token) return;
-    
-          try {
-            const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
-            const response = await fetch(`http://${baseUrl}:8000/verify-token/${token}`, {
-              method: 'GET',
-            });
-    
-            if (response.ok) {
-              setIsAuthenticated(true);
-            } else {
-              setIsAuthenticated(false);
-            }
-          } catch (error) {
-            console.error('Error verifying token:', error);
-            setIsAuthenticated(false);
-          }
-        };
-    
-        verifyToken();
+
         fetchTrees();
-      }, []);
+    }, []);
+
     const handleTreeSelect = (tree) => {
         setSelectedTree(tree);
     };

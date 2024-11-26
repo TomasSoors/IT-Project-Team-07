@@ -8,8 +8,7 @@ const data = {
       const response = await fetch(`http://${url}/trees`, {
         method: 'GET',
       });
-      if (!response.ok) throw new Error('Failed to fetch trees.');
-      let tre = await response.json()      
+      if (!response.ok) throw new Error('Failed to fetch trees.');     
       return await response.json();
     } catch (error) {
       console.error('Error fetching trees:', error);
