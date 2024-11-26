@@ -57,7 +57,7 @@ function UploadView() {
                 typeof tree.position[0] !== 'number' ||
                 typeof tree.position[1] !== 'number'
               ) {
-                treeErrors.push(`Boom met index ${index}: Ongeldige positie.`);
+                treeErrors.push(`Boom met index ${index}: De positie ontbreekt of is ongeldig..`);
               }
               if (!tree.description) {
                 treeErrors.push(`Boom met index ${index}: Beschrijving ontbreekt.`);
