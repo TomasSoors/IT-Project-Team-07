@@ -8,7 +8,7 @@ on:
       - completed
 
 jobs:
-  playwright-tests:
+  playwright-postman-tests:
     runs-on: ubuntu-latest
     steps:
       # Stap 1: Haal de testrepo op
