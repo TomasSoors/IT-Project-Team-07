@@ -38,8 +38,8 @@ const Navbar = () => {
     console.log("Logging out...");
     try {
       const token = sessionStorage.getItem('token');
-      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'localhost';
-      await fetch(`http://${baseUrl}:8000/revoke-token/${token}`, {
+      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+      await fetch(`${baseUrl}/revoke-token/${token}`, {
         method: 'POST',
       });
       sessionStorage.removeItem('token');
