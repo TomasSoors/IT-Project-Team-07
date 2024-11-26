@@ -16,6 +16,8 @@ jobs:
       - name: Clone test repository 
         run: |
           sudo mkdir /test-repo
+          sudo chown -R $USER:$USER "/test-repo"
+          sudo chmod -R u+rw "/test-repo"
           sudo git clone https://github.com/RobbyWillemsPXL/Mutualism-Testing.git /test-repo
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
@@ -35,10 +37,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version:  lts/*
-      - name: Set directory permissions
-        run: |
-          sudo chown -R $USER:$USER "/test-repo"
-          sudo chmod -R u+rw "/test-repo"
+          
       - name: Verify Java version
         run: | 
           cd "/test-repo/Sprint 2/Playwright/MutualismWebTesting"
