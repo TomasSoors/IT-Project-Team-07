@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "./Navbar.css"
 import { useNavigate } from 'react-router-dom';
-import "@fontsource/jost";
-
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -48,10 +46,8 @@ const Navbar = () => {
       console.error("Er is een fout opgetreden bij het revoken van de token:", error);
     }
 
-    // Zet de authenticatiestatus naar false
     setIsAuthenticated(false);
 
-    // Navigeren naar de homepagina (of loginpagina)
     navigate("/");
   };
 
