@@ -74,7 +74,7 @@ describe('MapView Component', () => {
         fireEvent.click(markers[0]);
 
         const treeTitle = await screen.findByText(`Boom #${mockTrees[0].id}`);
-        const descriptionLabel = await screen.findByText(/Description:/i);
+        const descriptionLabel = await screen.findByText(/Beschrijving:/i);
         const treeDescription = await screen.findByText(/Sample description A/i);
         expect(treeTitle).toBeInTheDocument();
         expect(treeDescription).toBeInTheDocument();
