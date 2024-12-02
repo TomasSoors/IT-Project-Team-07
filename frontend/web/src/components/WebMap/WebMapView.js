@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import data from '../../../../shared/data';
@@ -135,12 +136,13 @@ LayerControl.propTypes = {
     setActiveLayer: PropTypes.func.isRequired,
 };
 
-const MapView = () => {
+const MapView = ({ fetchTrees }) => {
     const [trees, setTrees] = useState([]);
     const [activeLayer, setActiveLayer] = useState(layers[0]);
     const [center] = useState([50.95306, 5.352692]);
     const [zoom] = useState(16);
     const [selectedTree, setSelectedTree] = useState(null);
+
 
     useEffect(() => {
         const fetchTrees = async () => {
@@ -149,7 +151,7 @@ const MapView = () => {
         };
 
         fetchTrees();
-    }, []);
+    }, [fetchTrees]);
 
     const handleTreeSelect = (tree) => {
         setSelectedTree(tree);
@@ -168,20 +170,23 @@ const MapView = () => {
                         center={center}
                         zoom={zoom}
                         className="leaflet-map"
+                        id="map-container"
                     >
                         <LayerControl activeLayer={activeLayer} setActiveLayer={setActiveLayer} />
-                        <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" />
-                        {trees.map((tree) => (
+                        <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" id="tile-layer" />
+                        {trees.length > 0 && trees.map((tree) => (
                             <DynamicMarker
                                 key={tree.id}
                                 tree={tree}
                                 isSelected={selectedTree?.id === tree.id}
                                 onTreeSelect={handleTreeSelect}
+                                id={`dynamic-marker-${tree.id}`}
                             />
                         ))}
                     </MapContainer>
+                                    
                 </div>
-                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} />}
+                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} id="tree-detail" />}
             </div>
         </div>
     );

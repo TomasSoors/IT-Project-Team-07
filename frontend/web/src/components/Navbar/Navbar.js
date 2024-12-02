@@ -47,10 +47,8 @@ const Navbar = () => {
       console.error("Er is een fout opgetreden bij het revoken van de token:", error);
     }
 
-    // Zet de authenticatiestatus naar false
     setIsAuthenticated(false);
 
-    // Navigeren naar de homepagina (of loginpagina)
     navigate("/");
   };
 

@@ -26,19 +26,19 @@ const TreeDetail = ({ selectedTree, onClose }) => {
                             </div>
                             <div className="details">
                                 <h3>Data:</h3>
-                                <p><strong>Description:</strong> {selectedTree.description}</p>
-                                <p><strong>Height:</strong> {selectedTree.height} meter</p>
-                                <p><strong>Coordinates:</strong> {selectedTree.latitude}, {selectedTree.longitude}</p>
+                                <p><strong>Beschrijving:</strong> {selectedTree.description}</p>
+                                <p><strong>Hoogte:</strong> {selectedTree.height} meter</p>
+                                <p><strong>Coördinaten:</strong> {selectedTree.latitude}, {selectedTree.longitude}</p>
                             </div>
                         </div>
                     ) : (
-                        <p>Select a tree to see details.</p>
+                        <p>Selecteer een boom om de details te bekijken.</p>
                     )}
                 </div>
             </div>
         </div>
     );
-};
+}
 
 TreeDetail.propTypes = {
     selectedTree: PropTypes.shape({
@@ -56,3 +56,4 @@ TreeDetail.defaultProps = {
 };
 
 export default TreeDetail;
+
