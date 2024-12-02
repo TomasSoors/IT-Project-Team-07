@@ -171,11 +171,7 @@ const MapView = () => {
                         zoom={zoom}
                         className="leaflet-map"
                     >
-                        <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" />
-                        {sharedData.map((tree) => (
-
                         <LayerControl activeLayer={activeLayer} setActiveLayer={setActiveLayer} />
-                        <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" />
                         {trees.map((tree) => (
                             <DynamicMarker
                                 key={tree.id}
@@ -185,6 +181,7 @@ const MapView = () => {
                             />
                         ))}
                     </MapContainer>
+                                    
                 </div>
                 {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} />}
             </div>
