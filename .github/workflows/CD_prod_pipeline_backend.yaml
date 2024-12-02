@@ -1,0 +1,29 @@
+name: pipeline for production environment - backend
+
+on:
+  workflow_run:
+    workflows: ["pipeline docker build for production environment - backend"]
+    types:
+      - completed
+
+jobs:
+  deploy-backend-prod:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      
+      - name: Configure Docker to use Google Cloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: 'deploy production backend'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'mutualism-backend-production'
+          region: 'europe-west1'
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-prod:latest'
