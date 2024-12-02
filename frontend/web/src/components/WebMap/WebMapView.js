@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import data from '../../../../shared/data';
@@ -142,6 +143,7 @@ const MapView = ({ fetchTrees }) => {
     const [zoom] = useState(16);
     const [selectedTree, setSelectedTree] = useState(null);
 
+
     useEffect(() => {
         const fetchTrees = async () => {
             const fetchedTrees = await data.getTrees();
@@ -182,6 +184,7 @@ const MapView = ({ fetchTrees }) => {
                             />
                         ))}
                     </MapContainer>
+                                    
                 </div>
                 {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} id="tree-detail" />}
             </div>
