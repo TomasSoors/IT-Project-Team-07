@@ -15,7 +15,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(user_router, tags=["Users"])
-app.include_router(tree_router, prefix="/trees", tags=["Trees"])
+app.include_router(tree_router, tags=["Trees"])
 app.include_router(token_router, tags=["Tokens"])
 
 @app.get("/")
