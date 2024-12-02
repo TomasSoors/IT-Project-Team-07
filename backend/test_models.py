@@ -2,8 +2,10 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database import Base, get_db
-from models import User, Tree
+from models.user_model import User
+from models.tree_model import Tree
 from datetime import datetime
+
 
 
 # SQLite in-memory database voor de tests
