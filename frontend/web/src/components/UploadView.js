@@ -122,6 +122,7 @@ function UploadView() {
         justifyContent: 'center',
         alignItems: 'center',
         padding: '20px',
+        overflow: 'hidden'
       }}>
         <div
           onDrop={handleDrop}
