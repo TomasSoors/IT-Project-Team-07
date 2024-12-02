@@ -1,7 +1,7 @@
 name: pipeline docker build for test environment - backend
 
 on:
-  pull-request:
+  pull_request:
     branches:
       - Test
 
