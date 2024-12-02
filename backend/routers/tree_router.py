@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from database import get_db
 from models.tree_model import Tree
 from pydantic import BaseModel
@@ -13,22 +13,26 @@ class TreeCreate(BaseModel):
     latitude: float
     longitude: float
 
-@router.get("/")
+@router.get("/trees")
 def get_trees(db: Session = Depends(get_db)):
     return db.query(Tree).all()
 
-@router.post("/")
+@router.post("/trees")
 def create_tree(tree: TreeCreate, db: Session = Depends(get_db)):
-    db_tree = db.query(Tree).filter(and_(Tree.latitude == tree.latitude, Tree.longitude == tree.longitude)).first()
+    radius = 0.0001
+    db_tree = db.query(Tree).filter(
+        func.abs(Tree.latitude - tree.latitude) < radius,
+        func.abs(Tree.longitude - tree.longitude) < radius
+    ).first()
     if db_tree:
-        raise HTTPException(status_code=404, detail="Tree already exists")
+        raise HTTPException(status_code=404, detail="Tree already exists!")
     db_tree = Tree(**tree.dict())
     db.add(db_tree)
     db.commit()
     db.refresh(db_tree)
     return db_tree
 
-@router.delete("/{tree_id}")
+@router.delete("/trees/{tree_id}")
 def delete_tree(tree_id: int, db: Session = Depends(get_db)):
     db_tree = db.query(Tree).filter(Tree.id == tree_id).first()
     if not db_tree:
