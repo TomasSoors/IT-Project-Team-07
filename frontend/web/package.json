@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@cfaester/enzyme-adapter-react-18": "^0.8.0",
     "@fontsource/jost": "^5.1.1",
-    "@testing-library/react-native": "^12.9.0",
     "@testing-library/user-event": "^13.5.0",
     "customize-cra": "^1.0.0",
     "framer-motion": "^11.11.17",
@@ -38,8 +36,7 @@
     "jest-watch-typeahead": "^2.2.2",
     "react-app-rewire-babel-loader": "^0.1.1",
     "react-app-rewired": "^2.2.1",
-    "react-scripts": "^5.0.1",
-    "react-test-renderer": "^16.0.0-alpha.12"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
