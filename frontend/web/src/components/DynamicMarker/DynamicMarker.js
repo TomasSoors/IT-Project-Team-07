@@ -5,6 +5,9 @@ import L from 'leaflet';
 import treeLogo from '../../../../shared/images/tree-icon.png';
 import selectedTreeLogo from '../../../../shared/images/tree-icon-selected.png';
 
+import PropTypes from 'prop-types';
+
+
 function getIconSize(zoom) {
     if (zoom >= 16) return [40, 40];
     if (zoom === 15 || zoom === 14) return [30, 30];
@@ -44,6 +47,16 @@ const DynamicMarker = ({ tree, isSelected, onTreeSelect }) => {
         >
         </Marker>
     );
+};
+
+
+DynamicMarker.propTypes = {
+    tree: PropTypes.shape({
+        latitude: PropTypes.number.isRequired,
+        longitude: PropTypes.number.isRequired,
+    }).isRequired,
+    isSelected: PropTypes.bool.isRequired,
+    onTreeSelect: PropTypes.func.isRequired,
 };
 
 export default DynamicMarker;
