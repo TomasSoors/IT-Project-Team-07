@@ -1,15 +1,23 @@
 // jest-dom adds custom jest matchers for asserting on DOM nodes
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
-import fetchMock from 'jest-fetch-mock'; // Correct import for jest-fetch-mock
-import 'jest-canvas-mock'; // To mock canvas for Leaflet
 
-// Enable fetch mocks
+// Fix for TextEncoder, TextDecoder, and ReadableStream
+import { TextEncoder, TextDecoder, ReadableStream } from 'util';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+global.ReadableStream = ReadableStream;
+
+// Mock fetch
+import fetchMock from 'jest-fetch-mock';
 fetchMock.enableMocks();
 
-import L from 'leaflet';
+// Mock canvas for Leaflet
+import 'jest-canvas-mock';
 
-// Mock Leaflet icon to avoid issues with missing images
+
+// Leaflet Icon Mock
+import L from 'leaflet';
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'mockIcon',
   iconUrl: 'mockIcon',
