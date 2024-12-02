@@ -20,9 +20,7 @@ const data = {
   async addTree(tree) {
     try {
         const token = sessionStorage.getItem('token');
-        const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost';
-        
-        const response = await fetch(`${baseUrl}:8000/trees`, {
+        const response = await fetch(`${baseUrl}/trees`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
