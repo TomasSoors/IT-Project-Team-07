@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          ref: 'test' 
+          ref: 'Test' 
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
