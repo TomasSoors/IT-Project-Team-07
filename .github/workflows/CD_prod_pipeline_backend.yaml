@@ -20,10 +20,17 @@ jobs:
       - name: Configure Docker to use Google Cloud credentials
         run: |
           gcloud auth configure-docker europe-west1-docker.pkg.dev
+      
+      - name: Fetch Latest Release Tag
+        id: get_latest_release
+        run: |
+          LATEST_TAG=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: 'deploy production backend'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: 'mutualism-backend-production'
           region: 'europe-west1'
-          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-prod:latest'
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-prod:${{ env.LATEST_TAG }}'
