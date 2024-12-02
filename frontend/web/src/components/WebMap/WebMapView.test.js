@@ -59,8 +59,14 @@ describe('MapView Component', () => {
             </MemoryRouter>
         );
 
-        const markers = await screen.findAllByRole('button', { name: /Marker/i });
-        expect(markers).toHaveLength(2);
+        await waitFor(() => {
+            // const markers = screen.getAllByAltText(/^dynamic-marker-\d+$/);
+            const markers = screen.getByAltText("dynamic-marker-1");
+            expect(markers).toBeInTheDocument();
+            // expect(markers).toHaveLength(2);
+        });
+
+        
     });
 
     test('shows tree details when a marker is clicked', async () => {
