@@ -37,7 +37,7 @@ jobs:
       - name: change database url
         run: |
           cd backend
-          sed -i 's/test/production/' <filename>
+          sed -i 's/test/production/' start.sh
 
       - name: Build test backend Docker image
         run: |
