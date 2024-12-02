@@ -1,19 +1,18 @@
-name: pipeline docker build for test environment - backend
+name: pipeline docker build for production environment - backend
 
 on:
-  pull-request:
-    branches:
-      - test
+  release:
+    types: [released]
 
 jobs:
-  build-and-push-backend-test:
+  build-and-push-backend-production:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
-          ref: 'Development' 
+          ref: 'test' 
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
@@ -37,14 +36,14 @@ jobs:
 
       - name: Build test backend Docker image
         run: |
-          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-prod"
           docker build --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-                       --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-                       -t "$IMAGE_NAME" backend
+                       --build-arg DATABASE_URL="${{ secrets.DATABASE_URL_PROD }}" \
+                       -t "$IMAGE_NAME:${{ github.event.release.tag_name }}" backend
 
       - name: Push test backend Docker image to GCR
         run: |
-          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-test"  
-          docker push "$IMAGE_NAME"
+          IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-prod"  
+          docker push "$IMAGE_NAME:${{ github.event.release.tag_name }}"
 
     
