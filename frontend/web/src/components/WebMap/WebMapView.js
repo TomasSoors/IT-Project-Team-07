@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import data from '../../../../shared/data';
@@ -142,6 +143,7 @@ const MapView = () => {
     const [zoom] = useState(16);
     const [selectedTree, setSelectedTree] = useState(null);
 
+
     useEffect(() => {
         const fetchTrees = async () => {
             const fetchedTrees = await data.getTrees();
@@ -170,7 +172,6 @@ const MapView = () => {
                         className="leaflet-map"
                     >
                         <LayerControl activeLayer={activeLayer} setActiveLayer={setActiveLayer} />
-                        <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" />
                         {trees.map((tree) => (
                             <DynamicMarker
                                 key={tree.id}
@@ -180,6 +181,7 @@ const MapView = () => {
                             />
                         ))}
                     </MapContainer>
+                                    
                 </div>
                 {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} />}
             </div>

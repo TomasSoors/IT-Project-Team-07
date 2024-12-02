@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import treeLogo from '../../../../shared/images/tree-icon.png';
 import selectedTreeLogo from '../../../../shared/images/tree-icon-selected.png';
+
 import PropTypes from 'prop-types';
 
 
@@ -47,6 +48,7 @@ const DynamicMarker = ({ tree, isSelected, onTreeSelect }) => {
         </Marker>
     );
 };
+
 
 DynamicMarker.propTypes = {
     tree: PropTypes.shape({
