@@ -38,7 +38,7 @@ const TreeDetail = ({ selectedTree, onClose }) => {
             </div>
         </div>
     );
-
+}
 
 TreeDetail.propTypes = {
     selectedTree: PropTypes.shape({
