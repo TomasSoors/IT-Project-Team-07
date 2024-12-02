@@ -110,7 +110,6 @@ jobs:
           # coverage run --source=. -m pytest
           # coverage xml -o coverage.xml
       
-
       - name: SonarQube Scan 
         uses: sonarsource/sonarqube-scan-action@master
         env:
