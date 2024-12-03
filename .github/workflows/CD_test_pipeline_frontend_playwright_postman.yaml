@@ -41,6 +41,9 @@ jobs:
       - name: Checkout app repository
         uses: actions/checkout@v3
       
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      
       - name: Clone test repository
         run: |
           mkdir -p $GITHUB_WORKSPACE/test-repo
@@ -88,7 +91,8 @@ jobs:
           mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chromium -Dheadless=true
         env:
           CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
-      
+        continue-on-error: true
+
       - name: Get Cloud Run URL and Set as Env Variable
         run: |
           SERVICE_NAME="mutualism-backend"
@@ -114,12 +118,15 @@ jobs:
       - name: Run Postman API tests
         run: |
           newman run "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
-            -e "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing_env.postman_environment.json"
-
+            -e "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing_env.postman_environment.json" \
+            -r cli,junit --reporter-junit-export "test-results-postman.xml"
+        continue-on-error: true
+      
       - name: change file name
         run: |
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/"
           mv report.html index.html
+
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -130,14 +137,19 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: api for tests
+      
+      - name: api for playwright tests
         run: |
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC17_LoginTest.xml" -H "Content-Type: multipart/form-data"
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC18_LoginWithWrongCredentialsTest.xml" -H "Content-Type: multipart/form-data"
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC19_AdminNavigationTest.xml" -H "Content-Type: multipart/form-data"
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC20_21_LogoutTest.xml" -H "Content-Type: multipart/form-data"
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC22_ContinueAsGuestNavigationTest.xml" -H "Content-Type: multipart/form-data"
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC23_UploadNavigationAsRegularUserTest.xml" -H "Content-Type: multipart/form-data"
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC24_UploadFileTestRedirectTest.xml" -H "Content-Type: multipart/form-data"
-          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARERE}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC26_UploadErrorTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC17_LoginTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC18_LoginWithWrongCredentialsTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC19_AdminNavigationTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC20_21_LogoutTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC22_ContinueAsGuestNavigationTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC23_UploadNavigationAsRegularUserTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC24_UploadFileTestRedirectTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC26_UploadErrorTest.xml" -H "Content-Type: multipart/form-data"
+      
+      - name: api for postman tests
+        run: |
+           curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@test-results-postman.xml" -H "Content-Type: multipart/form-data"
+          
