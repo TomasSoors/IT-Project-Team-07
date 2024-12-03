@@ -7,16 +7,15 @@ from jose import JWTError, jwt
 
 router = APIRouter()
 
+
 class TokenRequest(BaseModel):
     username: str
     password: str
 
+
 def standard_response(success: bool, message: str, data: dict | None = None):
-    return {
-        "success": success,
-        "message": message,
-        "data": data
-    }
+    return {"success": success, "message": message, "data": data}
+
 
 @router.get("/verify-token/{token}")
 def verify_user_token(token: str, db: Session = Depends(get_db)):
@@ -37,6 +36,5 @@ def revoke_user_token(token: str, db: Session = Depends(get_db)):
         return standard_response(True, "Token has been revoked.")
     except HTTPException as e:
         raise HTTPException(
-            status_code=e.status_code,
-            detail=standard_response(False, e.detail)
+            status_code=e.status_code, detail=standard_response(False, e.detail)
         )

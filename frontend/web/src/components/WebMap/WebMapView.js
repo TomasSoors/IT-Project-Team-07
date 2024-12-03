@@ -9,6 +9,9 @@ import L from 'leaflet';
 import PropTypes from 'prop-types';
 import DynamicMarker from '../DynamicMarker/DynamicMarker';
 import TreeDetail from '../TreeDetail/TreeDetail';
+import { ReactNotifications, Store } from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
+import 'animate.css/animate.min.css';
 
 const layers = [
     {
@@ -143,14 +146,12 @@ const MapView = ({ fetchTrees }) => {
     const [zoom] = useState(16);
     const [selectedTree, setSelectedTree] = useState(null);
 
-
+    const fetchTreesData = async () => {
+        const fetchedTrees = await data.getTrees();
+        setTrees(fetchedTrees);
+    };
     useEffect(() => {
-        const fetchTrees = async () => {
-            const fetchedTrees = await data.getTrees();
-            setTrees(fetchedTrees);
-        };
-
-        fetchTrees();
+        fetchTreesData();
     }, [fetchTrees]);
 
     const handleTreeSelect = (tree) => {
@@ -161,8 +162,31 @@ const MapView = ({ fetchTrees }) => {
         setSelectedTree(null);
     };
 
+    const handleDeleteTree = async () => {
+        if(selectedTree){
+            const response = await data.deleteTree(selectedTree)
+            if(response.ok) {
+                Store.addNotification({
+                    title: "Succesvol verwijderd!",
+                    message: `Boom met ID: ${selectedTree.id} is succesvol verwijderd`,
+                    type: "success",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animate__animated", "animate__bounceIn"],
+                    animationOut: ["animate__animated", "animate__zoomOut"],
+                    dismiss: {
+                      duration: 3000,
+                      onScreen: true
+                    }
+                  });
+                  handleCloseDetail()
+                  fetchTreesData();
+            }
+        }
+    };
     return (
         <div className="layout">
+            <ReactNotifications />
             <Navbar />
             <div className={`map-container ${selectedTree ? 'map-container-selected' : ''}`}>
                 <div className="map-area">
@@ -186,7 +210,7 @@ const MapView = ({ fetchTrees }) => {
                     </MapContainer>
                                     
                 </div>
-                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} id="tree-detail" />}
+                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} id="tree-detail" />}
             </div>
         </div>
     );

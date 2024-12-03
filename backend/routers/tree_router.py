@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 from database import get_db
 from models.tree_model import Tree
+from services.token_service import verify_token
 from pydantic import BaseModel
 
 router = APIRouter()
+
 
 class TreeCreate(BaseModel):
     name: str
@@ -13,17 +15,30 @@ class TreeCreate(BaseModel):
     latitude: float
     longitude: float
 
+
 @router.get("/trees")
 def get_trees(db: Session = Depends(get_db)):
     return db.query(Tree).all()
 
+
 @router.post("/trees")
-def create_tree(tree: TreeCreate, db: Session = Depends(get_db)):
+def create_tree(tree: TreeCreate, request: Request, db: Session = Depends(get_db)):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=401, detail="Missing or invalid Authorization header."
+        )
+    token = auth_header.split(" ")[1]
+    verify_token(token=token, db=db)
     radius = 0.0001
-    db_tree = db.query(Tree).filter(
-        func.abs(Tree.latitude - tree.latitude) < radius,
-        func.abs(Tree.longitude - tree.longitude) < radius
-    ).first()
+    db_tree = (
+        db.query(Tree)
+        .filter(
+            func.abs(Tree.latitude - tree.latitude) < radius,
+            func.abs(Tree.longitude - tree.longitude) < radius,
+        )
+        .first()
+    )
     if db_tree:
         raise HTTPException(status_code=404, detail="Tree already exists!")
     db_tree = Tree(**tree.dict())
@@ -31,6 +46,7 @@ def create_tree(tree: TreeCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_tree)
     return db_tree
+
 
 @router.delete("/trees/{tree_id}")
 def delete_tree(tree_id: int, db: Session = Depends(get_db)):

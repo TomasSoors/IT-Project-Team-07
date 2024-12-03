@@ -45,6 +45,30 @@ const data = {
         console.error("Error in addTree:", error);
       }
   },
+
+async deleteTree(tree) {
+  try {
+      const token = sessionStorage.getItem('token');
+      const response = await fetch(`${baseUrl}/trees/${tree.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error removing tree:", errorData);
+        throw new Error("Failed to remove tree.");
+      }
+  
+      console.log("Tree removed successfully.");
+      return response
+    } catch (error) {
+      console.error("Error in deleteTree:", error);
+    }
+},
 };
 
 export default data;
