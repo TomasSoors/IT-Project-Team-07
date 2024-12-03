@@ -82,7 +82,7 @@ jobs:
       - name: Install Node.js Dependencies for mobile
         run: |
           cd frontend/mobile
-          npm install
+          yarn install
 
       - name: Run React.js Tests with Coverage for mobile
         run: |
