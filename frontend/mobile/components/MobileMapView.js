@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Alert, Image, Text } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, Callout, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
 import data from '../../shared/data';
 import treeIcon from '../assets/tree-icon.png';
 import { useNavigation } from '@react-navigation/native';
 import infoIcon from '../assets/info.png';
 
-const MobileMapView = () => {
+const MobileMapView = ({radius}) => {
   const [location, setLocation] = useState(null);
   const [trees, setTrees] = useState([]);
   const [region, setRegion] = useState({
@@ -38,7 +38,7 @@ const MobileMapView = () => {
       }
     })();
     const fetchTrees = async () => {
-      const fetchedTrees = await data.getTrees(true);
+      const fetchedTrees = await data.getTrees();
       setTrees(fetchedTrees);
     };
     fetchTrees();
@@ -85,6 +85,19 @@ const MobileMapView = () => {
             pinColor="blue"
             testID='your-location'
           />
+        )}
+        {location && (
+          <Circle
+          center={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+          }}
+          radius={radius}
+          strokeWidth={1}
+          strokeColor="#7FB241"
+          fillColor="rgba(127, 178, 65, 0.3)"
+          testID="location-circle"
+        />
         )}
       </MapView>
     </View>

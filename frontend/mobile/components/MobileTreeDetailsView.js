@@ -10,7 +10,6 @@ const MobileTreeDetailsView = ({ route }) => {
   return (
     <View style={styles.container}>
       <Image source={infoIcon} style={styles.info}/>
-      <Text style={styles.title}>Tree info</Text>
       <Image source={treeIcon} style={styles.image} />
       <Text style={styles.treeId}>Boom #{tree.id}</Text>
       <View style={styles.dataContainer}>

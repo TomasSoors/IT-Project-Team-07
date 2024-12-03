@@ -17,6 +17,13 @@ const MapStack = () => (
   </Stack.Navigator>
 );
 
+const ListStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="TreeList" component={TreeList} options={{ headerShown: false }} />
+    <Stack.Screen name="TreeDetails" component={MobileTreeDetailsView} options={{ title: 'Tree Details' }} />
+  </Stack.Navigator>
+);
+
 const App = () => {
   return (
     <NavigationContainer>
@@ -42,7 +49,7 @@ const App = () => {
         })}
       >
         <Tab.Screen name="Map" component={MapStack} />
-        <Tab.Screen name="List" component={TreeList} />
+        <Tab.Screen name="List" component={ListStack} />
       </Tab.Navigator>
     </NavigationContainer>
   );
