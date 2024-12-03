@@ -1,21 +1,20 @@
-// mobile/metro.config.js
 const path = require('path');
-const { getDefaultConfig } = require('expo/metro-config');
+const { getDefaultConfig } = require('@expo/metro-config');
 
 module.exports = (async () => {
-  const {
-    resolver: { sourceExts, assetExts },
-  } = await getDefaultConfig(__dirname);
+  const defaultConfig = await getDefaultConfig(__dirname);
+  const { resolver: { sourceExts, assetExts } } = defaultConfig;
 
   return {
+    ...defaultConfig,
     resolver: {
+      ...defaultConfig.resolver,
       assetExts: assetExts.filter(ext => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg'],
       nodeModulesPaths: [
         path.resolve(__dirname, 'node_modules'),
-        path.resolve(__dirname, '../shared'), // Toegang tot de shared folder
       ],
     },
-    watchFolders: [path.resolve(__dirname, '../shared')], // Voeg de shared folder toe aan watchFolders
+    watchFolders: [path.resolve(__dirname, '../shared')],
   };
 })();

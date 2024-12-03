@@ -18,10 +18,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "buildProperties": {
+        "compileSdkVersion": 31,
+        "targetSdkVersion": 31,
+        "buildToolsVersion": "31.0.0"
+      },
+      "package": "com.maartengregoorpxl.MobileApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3b26b051-5bd0-4664-bcb5-e93dd50de211"
+      }
     }
   }
 }
