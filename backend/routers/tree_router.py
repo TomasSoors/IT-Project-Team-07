@@ -13,11 +13,11 @@ class TreeCreate(BaseModel):
     latitude: float
     longitude: float
 
-@router.get("/")
+@router.get("/trees")
 def get_trees(db: Session = Depends(get_db)):
     return db.query(Tree).all()
 
-@router.post("/")
+@router.post("/trees")
 def create_tree(tree: TreeCreate, db: Session = Depends(get_db)):
     radius = 0.0001
     db_tree = db.query(Tree).filter(
@@ -32,7 +32,7 @@ def create_tree(tree: TreeCreate, db: Session = Depends(get_db)):
     db.refresh(db_tree)
     return db_tree
 
-@router.delete("/{tree_id}")
+@router.delete("/trees/{tree_id}")
 def delete_tree(tree_id: int, db: Session = Depends(get_db)):
     db_tree = db.query(Tree).filter(Tree.id == tree_id).first()
     if not db_tree:
