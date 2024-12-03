@@ -117,6 +117,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }} 
 
+      - name: Wait for SonarQube Analysis to be available
+        run: | 
+          sleep 30; 
+
       - uses: phwt/sonarqube-quality-gate-action@v1
         id: quality-gate-check
         with:
