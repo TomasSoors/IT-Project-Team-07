@@ -88,11 +88,16 @@ jobs:
           newman run "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
             -e "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing_env.postman_environment.json"
        
+
+      - name: ls of the test-repo
+        run: |
+          ls -la $GITHUB_WORKSPACE/test-repo
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/report.html'
-          
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
