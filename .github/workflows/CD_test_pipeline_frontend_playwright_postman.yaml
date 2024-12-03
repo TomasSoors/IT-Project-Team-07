@@ -99,7 +99,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: test
-          path: /test-repo/Sprint 2/Playwright/MutualismWebTesting/
+          path: test-repo/Sprint 2/Playwright/MutualismWebTesting/
 
       - name: Deploy to GitHub Pages
         id: deployment
