@@ -94,9 +94,9 @@ jobs:
           cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/"
           mv report.html index.html
 
-          
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           name: test
           path: /test-repo/Sprint 2/Playwright/MutualismWebTesting/
