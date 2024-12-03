@@ -19,7 +19,7 @@
     "expo-location": "~15.1.1",
     "metro-config": "^0.81.0",
     "mobile": "file:",
-    "react": "^18.2.0",
+    "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "^0.71.14",
     "react-native-maps": "1.11.2",
@@ -32,7 +32,8 @@
     "@testing-library/jest-native": "^4.0.0",
     "@testing-library/react-native": "^9.0.0",
     "babel-preset-expo": "^9.3.0",
-    "jest-expo": "^48.0.0"
+    "jest-expo": "^48.0.0",
+    "react-test-renderer": "18.2.0"
   },
   "jest": {
     "preset": "jest-expo",
@@ -41,6 +42,9 @@
     ]
   },
   "resolutions": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-test-renderer": "18.2.0",
     "react-native-gesture-handler": "~2.9.0"
   },
   "engines": {
