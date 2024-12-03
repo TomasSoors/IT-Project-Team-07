@@ -6,6 +6,11 @@ on:
     types:
       - completed
 
+permissions:
+  pages: write
+  id-token: write
+  contents: read
+
 jobs: 
   deploy-frontend-test:
     runs-on: ubuntu-latest
@@ -110,3 +115,18 @@ jobs:
         run: |
           newman run "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
             -e "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing_env.postman_environment.json"
+
+      - name: change file name
+        run: |
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/"
+          mv report.html index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages 
+          path: test-repo/Sprint 2/Playwright/MutualismWebTesting
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
