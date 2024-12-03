@@ -4,6 +4,7 @@ name: pipeline for test environment frontend backend
 on: workflow_dispatch
 
 permissions:
+  pages: write
   id-token: write
   contents: read
 
