@@ -102,7 +102,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          name: test
+          name: github-pages 
           path: test-repo/Sprint 2/Playwright/MutualismWebTesting
 
       - name: Deploy to GitHub Pages
