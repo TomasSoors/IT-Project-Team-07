@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
-import TreeList from '../components/TreeList';
+import TreeListView from '../components/TreeListView';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import data from '../../shared/data';
@@ -36,7 +36,7 @@ useNavigation.mockReturnValue({
   navigate: mockNavigate,
 });
 
-describe('TreeList Component', () => {
+describe('TreeListView Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     Location.requestForegroundPermissionsAsync.mockResolvedValue({ status: 'granted' });
@@ -45,7 +45,7 @@ describe('TreeList Component', () => {
   });
 
   it('renders correctly', async () => {
-    const { getByText } = render(<TreeList />);
+    const { getByText } = render(<TreeListView />);
     await act(async () => {
       await waitFor(() => {
         expect(getByText('100m')).toBeTruthy();
@@ -54,7 +54,7 @@ describe('TreeList Component', () => {
   });
 
   it('requests location permissions', async () => {
-    render(<TreeList />);
+    render(<TreeListView />);
     await act(async () => {
       await waitFor(() => {
         expect(Location.requestForegroundPermissionsAsync).toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe('TreeList Component', () => {
   });
 
   it('updates the slider value and filters trees', async () => {
-    const { getByText, getByTestId } = render(<TreeList />);
+    const { getByText, getByTestId } = render(<TreeListView />);
     const slider = getByTestId('slider');
 
     act(() => {
@@ -77,7 +77,7 @@ describe('TreeList Component', () => {
   });
 
   it('renders tree markers from data', async () => {
-    const { getByTestId } = render(<TreeList />);
+    const { getByTestId } = render(<TreeListView />);
     await act(async () => {
       await waitFor(() => {
         mockTrees.forEach(tree => {

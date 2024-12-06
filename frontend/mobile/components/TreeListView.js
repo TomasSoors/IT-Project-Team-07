@@ -9,7 +9,7 @@ import info from '../assets/info.png';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 
-const TreeList = () => {
+const TreeListView = () => {
   const [sliderValue, setSliderValue] = useState(100);
   const [location, setLocation] = useState(null);
   const [filteredTrees, setFilteredTrees] = useState([]);
@@ -93,7 +93,7 @@ const TreeList = () => {
               <View style={styles.listTextContainer}>
                 <Text style={styles.listText}>
                   Boom #{tree.id} - {tree.distance !== undefined ? `${tree.distance.toFixed(2)} meter verwijderd` : 'Distance unknown'}
-                  <TouchableOpacity onPress={() => navigation.navigate('TreeDetailsFromList', { tree })}>
+                  <TouchableOpacity onPress={() => navigation.navigate('TreeDetails', { tree })}>
                     <Image source={info} style={styles.info} />
                   </TouchableOpacity>
                 </Text>
@@ -179,4 +179,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default TreeList;
+export default TreeListView;
