@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import treeIcon from '../assets/tree-icon.png';
 import infoIcon from '../assets/info.png';
 
-const MobileTreeDetailsView = ({ route }) => {
+const MobileTreeDetailView = ({ route }) => {
   const { tree } = route.params;
 
   return (
@@ -22,7 +22,7 @@ const MobileTreeDetailsView = ({ route }) => {
   );
 };
 
-MobileTreeDetailsView.propTypes = {
+MobileTreeDetailView.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
       tree: PropTypes.shape({
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MobileTreeDetailsView;
+export default MobileTreeDetailView;

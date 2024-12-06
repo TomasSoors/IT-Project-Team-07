@@ -4,8 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import MobileMapView from './components/MobileMapView';
-import TreeList from './components/TreeList';
-import MobileTreeDetailsView from './components/MobileTreeDetailsView';
+import TreeListView from './components/TreeListView';
+import MobileTreeDetailView from './components/MobileTreeDetailView';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -13,14 +13,14 @@ const Stack = createStackNavigator();
 const MapStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="MobileMapView" component={MobileMapView} options={{ headerShown: false }} />
-    <Stack.Screen name="TreeDetails" component={MobileTreeDetailsView} options={{ title: 'Tree Details' }} />
+    <Stack.Screen name="TreeDetails" component={MobileTreeDetailView} options={{ title: 'Tree Details' }} />
   </Stack.Navigator>
 );
 
 const ListStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="TreeList" component={TreeList} options={{ headerShown: false }} />
-    <Stack.Screen name="TreeDetails" component={MobileTreeDetailsView} options={{ title: 'Tree Details' }} />
+    <Stack.Screen name="TreeList" component={TreeListView} options={{ headerShown: false }} />
+    <Stack.Screen name="TreeDetails" component={MobileTreeDetailView} options={{ title: 'Tree Details' }} />
   </Stack.Navigator>
 );
 
@@ -48,8 +48,8 @@ const App = () => {
           },
         })}
       >
-        <Tab.Screen name="Map" component={MapStack} />
-        <Tab.Screen name="List" component={ListStack} />
+        <Tab.Screen name="Map" component={MapStack} options={{headerShown: false}} />
+        <Tab.Screen name="List" component={ListStack} options={{headerShown: false}}/>
       </Tab.Navigator>
     </NavigationContainer>
   );
