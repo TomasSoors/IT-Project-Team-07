@@ -152,4 +152,3 @@ jobs:
       - name: api for postman tests
         run: |
            curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@test-results-postman.xml" -H "Content-Type: multipart/form-data"
-     
