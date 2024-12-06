@@ -2,9 +2,9 @@ const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
 
 const data = {
   // Ophalen van alle bomen
-  async getTrees(mobile) {
+  async getTrees() {
     try {
-      const url = mobile ? '10.0.2.2:8000' : `${baseUrl}`;
+      const url = 'https://mutualism-backend-359585659782.europe-west1.run.app/';
       const response = await fetch(`${url}/trees`, {
         method: 'GET',
       });
