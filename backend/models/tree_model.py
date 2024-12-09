@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, DateTime
 from datetime import datetime
 from database import Base, engine
 
+
 class Tree(Base):
     __tablename__ = "trees"
 

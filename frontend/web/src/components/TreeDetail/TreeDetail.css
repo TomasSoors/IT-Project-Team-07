@@ -33,6 +33,16 @@
     width: 20px;
     height: 20px;
 }
+.delete-button {
+    position: absolute;
+    top: 75vh;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
 
 .tree-image {
     width: 150px;
