@@ -6,6 +6,7 @@ import data from '../../shared/data';
 import treeIcon from '../assets/tree-icon.png';
 import { useNavigation } from '@react-navigation/native';
 import infoIcon from '../assets/info.png';
+import PropTypes from 'prop-types';
 
 const MobileMapView = ({ radius }) => {
   const [location, setLocation] = useState(null);
@@ -140,5 +141,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }
 });
+
+MobileMapView.propTypes = { radius: PropTypes.number, };
 
 export default MobileMapView;

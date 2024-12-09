@@ -4,6 +4,7 @@ import TreeListView from '../components/TreeListView';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import data from '../../shared/data';
+import { Alert } from 'react-native';
 
 // Mock the Location module
 jest.mock('expo-location', () => ({
@@ -37,11 +38,17 @@ useNavigation.mockReturnValue({
 });
 
 describe('TreeListView Component', () => {
+  let alertSpy;
   beforeEach(() => {
     jest.clearAllMocks();
     Location.requestForegroundPermissionsAsync.mockResolvedValue({ status: 'granted' });
     Location.getCurrentPositionAsync.mockResolvedValue(mockLocation);
     data.getTrees.mockResolvedValue(mockTrees);
+    alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('renders correctly', async () => {
@@ -59,6 +66,20 @@ describe('TreeListView Component', () => {
       await waitFor(() => {
         expect(Location.requestForegroundPermissionsAsync).toHaveBeenCalled();
         expect(Location.getCurrentPositionAsync).toHaveBeenCalled();
+      });
+    });
+  });
+
+  it('shows alert when location permission is denied', async () => {
+    Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'denied' });
+
+    render(<TreeListView />);
+    await act(async () => {
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith(
+          'Permission Denied',
+          'We need access to your location to show it on the map.'
+        );
       });
     });
   });

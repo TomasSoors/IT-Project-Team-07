@@ -4,8 +4,7 @@ const data = {
   // Ophalen van alle bomen
   async getTrees() {
     try {
-      const url = 'https://mutualism-backend-359585659782.europe-west1.run.app/';
-      const response = await fetch(`${url}/trees`, {
+      const response = await fetch(`${baseUrl}/trees`, {
         method: 'GET',
       });
       if (!response.ok) throw new Error('Failed to fetch trees.');     
