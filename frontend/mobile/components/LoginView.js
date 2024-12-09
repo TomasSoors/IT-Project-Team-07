@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } fro
 import { Ionicons } from '@expo/vector-icons';
 import logo from '../assets/logo.png';
 import login from '../../shared/index';
+import * as SecureStore from 'expo-secure-store';
 
 const LoginView = () => {
     const [username, setUsername] = useState('');
@@ -14,11 +15,15 @@ const LoginView = () => {
             const token = await login.login(username, password);
             if (token) {
                 Alert.alert('Login Successful', 'You have successfully logged in!');
+                SecureStore.setItemAsync('token', token);
             }
         } catch (error) {
             Alert.alert('Login Failed', error.message);
+            console.error('Error logging in:', error);
         }
     };
+
+    const getToken = async () => SecureStore.getItemAsync('token');
 
     return (
         <View style={styles.container}>
