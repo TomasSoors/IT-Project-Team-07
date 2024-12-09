@@ -86,21 +86,21 @@ const TreeListView = () => {
         <Text style={styles.sliderText}>{sliderValue}m</Text>
       </View>
       <View style={styles.listContainerWrapper}>
-        <ScrollView style={styles.listContainer}>
-          {filteredTrees.map((tree, index) => (
-            <View key={index} style={styles.listItem}>
-              <Image source={treeIcon} style={styles.treeIcon} />
-              <View style={styles.listTextContainer}>
-                <Text style={styles.listText}>
-                  Boom #{tree.id} - {tree.distance !== undefined ? `${tree.distance.toFixed(2)} meter verwijderd` : 'Distance unknown'}
-                  <TouchableOpacity onPress={() => navigation.navigate('TreeDetails', { tree })}>
-                    <Image source={info} style={styles.info} />
-                  </TouchableOpacity>
-                </Text>
-              </View>
+      <ScrollView style={styles.listContainer}>
+        {filteredTrees.map((tree) => (
+          <View key={tree.id} style={styles.listItem}>
+            <Image source={treeIcon} style={styles.treeIcon} />
+            <View style={styles.listTextContainer}>
+              <Text style={styles.listText}>
+                Boom #{tree.id} - {tree.distance !== undefined ? `${tree.distance.toFixed(2)} meter verwijderd` : 'Distance unknown'}
+                <TouchableOpacity onPress={() => navigation.navigate('TreeDetails', { tree })}>
+                  <Image source={info} style={styles.info} />
+                </TouchableOpacity>
+              </Text>
             </View>
-          ))}
-        </ScrollView>
+          </View>
+        ))}
+      </ScrollView>
         <LinearGradient
           colors={['#ae9a64', '#f0f0f0']}
           style={styles.scrollIndicator}

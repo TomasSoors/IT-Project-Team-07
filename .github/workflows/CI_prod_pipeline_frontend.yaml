@@ -39,6 +39,7 @@ jobs:
           URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
           echo "Cloud Run URL is: $URL"
           echo "REACT_APP_EXTERNAL_IP=$URL" >> frontend/web/.env
+          echo "REACT_APP_EXTERNAL_IP=$URL" >> frontend/shared/.env
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} 
       
