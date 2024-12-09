@@ -19,11 +19,17 @@ const LoginView = () => {
             }
         } catch (error) {
             Alert.alert('Login Failed', error.message);
-            console.error('Error logging in:', error);
         }
     };
 
-    const getToken = async () => SecureStore.getItemAsync('token');
+    const handleLogout = async () => {
+        try {
+            await SecureStore.deleteItemAsync('token');
+            Alert.alert("Successfully logged out.")
+        } catch (error) {
+            console.error("Er is een fout opgetreden bij het revoken van de token:", error);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -61,6 +67,9 @@ const LoginView = () => {
             </View>
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogout}>
+                <Text style={styles.loginButtonText}>Logout</Text>
             </TouchableOpacity>
         </View>
     );
