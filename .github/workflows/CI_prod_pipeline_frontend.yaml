@@ -16,7 +16,7 @@ jobs:
       - name: Checkout specific branch 
         uses: actions/checkout@v3
         with:
-          ref: 'test'  
+          ref: 'main'  
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
@@ -33,12 +33,13 @@ jobs:
       
       - name: Get Cloud Run URL and Set as Env Variable
         run: |
-          SERVICE_NAME="mutualism-backend-prod"
+          SERVICE_NAME="mutualism-backend-production"
           REGION="europe-west1"
           PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
           URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
           echo "Cloud Run URL is: $URL"
           echo "REACT_APP_EXTERNAL_IP=$URL" >> frontend/web/.env
+          echo "REACT_APP_EXTERNAL_IP=$URL" >> frontend/shared/.env
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} 
       
