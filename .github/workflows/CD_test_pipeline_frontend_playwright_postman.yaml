@@ -1,0 +1,154 @@
+name: pipeline for test environment frontend backend
+
+on:
+  workflow_run:
+    workflows: ["pipeline docker build for test environment - frontend"]
+    types:
+      - completed
+
+permissions:
+  pages: write
+  id-token: write
+  contents: read
+
+jobs: 
+  deploy-frontend-test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      
+      - name: Configure Docker to use Google Cloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: 'deploy production frontend'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'mutualism-frontend'
+          region: 'europe-west1'
+          image: 'europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-frontend-test:latest'
+
+  playwright-postman-tests:
+    runs-on: ubuntu-latest
+    needs: deploy-frontend-test
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout app repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      
+      - name: Clone test repository
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/test-repo
+          git clone https://github.com/RobbyWillemsPXL/Mutualism-Testing.git $GITHUB_WORKSPACE/test-repo
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Set up Maven
+        uses: actions/setup-java@v3
+        with: 
+          java-version: '21' 
+          distribution: 'temurin' 
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version:  lts/*
+
+      - name: Log in to Google Cloud
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Get Cloud Run URL and Set as Env Variable
+        run: |
+          SERVICE_NAME="mutualism-frontend"
+          REGION="europe-west1"
+          PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
+          URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
+          echo "Cloud Run URL is: $URL "
+          echo "CLOUD_RUN_URL=$URL/" >> $GITHUB_ENV
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  
+
+      - name: Install dependencies
+        run: |
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          mvn -B install -D skipTests --no-transfer-progress -X        
+
+      - name: Run Playwright tests
+        run: |
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting"
+          mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"
+          mvn clean test -D app.url=${{ env.CLOUD_RUN_URL}} -D browser.type=chromium -Dheadless=true
+        env:
+          CLOUD_RUN_URL: ${{ env.CLOUD_RUN_URL }}
+        continue-on-error: true
+
+      - name: Get Cloud Run URL and Set as Env Variable
+        run: |
+          SERVICE_NAME="mutualism-backend"
+          REGION="europe-west1"
+          PROJECT_ID="buzzwatch-422510"  # Your Google Cloud project ID
+          URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --project $PROJECT_ID --format 'value(status.url)')
+          echo "Cloud Run URL is: $URL "
+          echo "CLOUD_RUN_URL=$URL/" >> $GITHUB_ENV
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} 
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Modify Postman environment file
+        run: |
+          # Load the Postman environment file
+          ENV_FILE="$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing_env.postman_environment.json"  # Adjust this path
+          sed -i "s|\"value\": \"http://localhost:8000\"|\"value\": \"${{ env.CLOUD_RUN_URL }}\"|" "$ENV_FILE"
+          echo "Updated Postman environment file with Cloud Run URL"  
+          cat "$ENV_FILE"
+
+      - name: Run Postman API tests
+        run: |
+          newman run "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing.postman_collection.json" \
+            -e "$GITHUB_WORKSPACE/test-repo/Sprint 2/Postman API-testing/Mutualism API-testing_env.postman_environment.json" \
+            -r cli,junit --reporter-junit-export "test-results-postman.xml"
+        continue-on-error: true
+      
+      - name: change file name
+        run: |
+          cd "$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/"
+          mv report.html index.html
+
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages 
+          path: test-repo/Sprint 2/Playwright/MutualismWebTesting
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      
+      - name: api for playwright tests
+        run: |
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC17_LoginTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC18_LoginWithWrongCredentialsTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC19_AdminNavigationTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC20_21_LogoutTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC22_ContinueAsGuestNavigationTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC23_UploadNavigationAsRegularUserTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC24_UploadFileTestRedirectTest.xml" -H "Content-Type: multipart/form-data"
+          curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@$GITHUB_WORKSPACE/test-repo/Sprint 2/Playwright/MutualismWebTesting/target/surefire-reports/TEST-be.pxl.mutualism.tests.TC26_UploadErrorTest.xml" -H "Content-Type: multipart/form-data"
+      
+      - name: api for postman tests
+        run: |
+           curl -X POST "https://jiradigi.pxl.be/rest/raven/1.0/import/execution/junit?projectKey=IT2425T07&testPlanKey=IT2425T07-119" -H "Authorization: ${{ secrets.BEARER}}" -F "file=@test-results-postman.xml" -H "Content-Type: multipart/form-data"

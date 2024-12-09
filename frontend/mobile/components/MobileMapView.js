@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Alert, Image } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { StyleSheet, View, Alert, Image, Text } from 'react-native';
+import MapView, { Marker, Callout, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
-import sharedData from '../../shared/data';
+import data from '../../shared/data';
 import treeIcon from '../assets/tree-icon.png';
+import { useNavigation } from '@react-navigation/native';
+import infoIcon from '../assets/info.png';
 
-const MobileMapView = () => {
+const MobileMapView = ({ radius }) => {
   const [location, setLocation] = useState(null);
+  const [trees, setTrees] = useState([]);
   const [region, setRegion] = useState({
     latitude: 50.95306,
     longitude: 5.352692,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitudeDelta: 0.2,
+    longitudeDelta: 0.2,
   });
+  const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
@@ -28,12 +32,29 @@ const MobileMapView = () => {
         setRegion({
           latitude: userLocation.coords.latitude,
           longitude: userLocation.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: 0.2,
+          longitudeDelta: 0.2,
         });
       }
     })();
+
+    const fetchTrees = async () => {
+      const fetchedTrees = await data.getTrees();
+      setTrees(fetchedTrees);
+    };
+    fetchTrees();
   }, []);
+
+  useEffect(() => {
+    if (location) {
+      setRegion({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      });
+    }
+  }, [location]);
 
   return (
     <View style={styles.container}>
@@ -43,20 +64,25 @@ const MobileMapView = () => {
         onRegionChangeComplete={setRegion}
         testID="map-view"
       >
-        {sharedData.map(tree => (
+        {trees.map(tree => (
           <Marker
             key={tree.id}
             testID={`marker-${tree.id}`}
             coordinate={{
               latitude: tree.latitude,
               longitude: tree.longitude,
-            }}
-            title={tree.title}
-            description={tree.description}>
+            }}>
             <Image
               source={treeIcon}
               style={styles.marker}
             />
+            <Callout testID={`callout=${tree.id}`} onPress={() => navigation.navigate('TreeDetails', { tree })}>
+              <View style={styles.callout}>
+                <Text style={styles.infoText}>
+                  <Image source={infoIcon} style={styles.infoImage}/>
+                </Text>
+              </View>
+            </Callout>
           </Marker>
         ))}
         {location && (
@@ -69,6 +95,19 @@ const MobileMapView = () => {
             description="This is where you are!"
             pinColor="blue"
             testID='your-location'
+          />
+        )}
+        {location && (
+          <Circle
+            center={{
+              latitude: location.latitude,
+              longitude: location.longitude,
+            }}
+            radius={radius}
+            strokeWidth={1}
+            strokeColor="#7FB241"
+            fillColor="rgba(127, 178, 65, 0.3)"
+            testID="location-circle"
           />
         )}
       </MapView>
@@ -86,6 +125,19 @@ const styles = StyleSheet.create({
   marker: {
     width: 30,
     height: 30,
+  },
+  infoImage: {
+    width: 40,
+    height: 40,
+  },
+  callout: {
+    width: 40,
+    height: 70,
+  },
+  infoText: {
+    width: 40,
+    height: 70,
+    alignItems: 'center',
   }
 });
 
