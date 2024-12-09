@@ -1,4 +1,4 @@
-const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_EXTERNAL_IP || "https://mutualism-backend-359585659782.europe-west1.run.app";
 
 const data = {
   // Ophalen van alle bomen
