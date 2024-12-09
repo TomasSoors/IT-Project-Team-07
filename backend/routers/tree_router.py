@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 from database import get_db
@@ -7,6 +8,7 @@ from services.token_service import verify_token
 from pydantic import BaseModel
 
 router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 class TreeCreate(BaseModel):
@@ -22,7 +24,12 @@ def get_trees(db: Session = Depends(get_db)):
 
 
 @router.post("/trees")
-def create_tree(tree: TreeCreate, request: Request, db: Session = Depends(get_db)):
+def create_tree(
+    tree: TreeCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         raise HTTPException(

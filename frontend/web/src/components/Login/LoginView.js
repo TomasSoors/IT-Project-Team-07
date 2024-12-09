@@ -18,6 +18,8 @@ const Login = () => {
     const formDetails = new URLSearchParams();
     formDetails.append('username', username);
     formDetails.append('password', password);
+    console.log(formDetails);
+    
 
     try {
       const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';

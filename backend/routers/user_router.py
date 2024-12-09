@@ -36,7 +36,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     return create_user(db, user.username, user.password)
 
 
-@router.post("/login")
+@router.post("/login", tags=["Authentication"])
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
@@ -51,6 +51,11 @@ def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return standard_response(
+
+    response = standard_response(
         True, "Login successful", {"access_token": access_token, "token_type": "bearer"}
     )
+    response["access_token"] = access_token
+    response["token_type"] = "bearer"
+
+    return response
