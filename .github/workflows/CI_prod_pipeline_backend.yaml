@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          ref: 'test' 
+          ref: 'main' 
 
       - name: Log in to Google Cloud
         uses: google-github-actions/auth@v1
@@ -34,11 +34,16 @@ jobs:
           name: "./backend/gcloud-credentials.json"
           json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
+      - name: change database url
+        run: |
+          cd backend
+          sed -i 's/test/production/' start.sh
+
       - name: Build test backend Docker image
         run: |
           IMAGE_NAME="europe-west1-docker.pkg.dev/buzzwatch-422510/mutualism/mutualism-backend-prod"
           docker build --build-arg SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-                       --build-arg DATABASE_URL="${{ secrets.DATABASE_URL_PROD }}" \
+                       --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
                        -t "$IMAGE_NAME:${{ github.event.release.tag_name }}" backend
 
       - name: Push test backend Docker image to GCR

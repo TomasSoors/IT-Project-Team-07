@@ -216,4 +216,8 @@ const MapView = ({ fetchTrees }) => {
     );
 };
 
+MapView.propTypes = {
+    fetchTrees: PropTypes.func.isRequired, 
+};
+
 export default MapView;

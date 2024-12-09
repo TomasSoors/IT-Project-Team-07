@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
 from datetime import datetime
-from database import Base
+from database import Base, engine
 
 
 class Tree(Base):
@@ -12,3 +12,5 @@ class Tree(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     added_at = Column(DateTime, default=datetime.utcnow)
+    
+Base.metadata.create_all(bind=engine)
