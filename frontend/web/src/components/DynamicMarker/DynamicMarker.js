@@ -54,6 +54,7 @@ const DynamicMarker = ({ tree, isSelected, onTreeSelect }) => {
 
 DynamicMarker.propTypes = {
     tree: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         latitude: PropTypes.number.isRequired,
         longitude: PropTypes.number.isRequired,
     }).isRequired,

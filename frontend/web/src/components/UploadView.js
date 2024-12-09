@@ -110,7 +110,7 @@ function UploadView() {
 
   return (
     <div style={{
-      backgroundColor: "#f0eee4", 
+      backgroundColor: "#f0eee4",
       height: "100vh",
       display: 'flex',
       flexDirection: 'column',
@@ -155,8 +155,8 @@ function UploadView() {
 
           {errors.length > 0 && (
             <ul style={{ color: 'red', textAlign: 'left', overflowX: 'auto' }}>
-              {errors.map((error, index) => (
-                <li key={index}>{error}</li>
+              {errors.map((error) => (
+                <li key={error}>{error}</li>
               ))}
             </ul>
           )}
