@@ -163,9 +163,9 @@ const MapView = ({ fetchTrees }) => {
     };
 
     const handleDeleteTree = async () => {
-        if(selectedTree){
+        if (selectedTree) {
             const response = await data.deleteTree(selectedTree)
-            if(response.ok) {
+            if (response.ok) {
                 Store.addNotification({
                     title: "Succesvol verwijderd!",
                     message: `Boom met ID: ${selectedTree.id} is succesvol verwijderd`,
@@ -175,12 +175,12 @@ const MapView = ({ fetchTrees }) => {
                     animationIn: ["animate__animated", "animate__bounceIn"],
                     animationOut: ["animate__animated", "animate__zoomOut"],
                     dismiss: {
-                      duration: 3000,
-                      onScreen: true
+                        duration: 3000,
+                        onScreen: true
                     }
-                  });
-                  handleCloseDetail()
-                  fetchTreesData();
+                });
+                handleCloseDetail()
+                fetchTreesData();
             }
         }
     };
@@ -208,7 +208,7 @@ const MapView = ({ fetchTrees }) => {
                             />
                         ))}
                     </MapContainer>
-                                    
+
                 </div>
                 {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} id="tree-detail" />}
             </div>
@@ -217,7 +217,7 @@ const MapView = ({ fetchTrees }) => {
 };
 
 MapView.propTypes = {
-    fetchTrees: PropTypes.func.isRequired, 
+    fetchTrees: PropTypes.func.isRequired,
 };
 
 export default MapView;

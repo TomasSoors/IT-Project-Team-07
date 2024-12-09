@@ -11,6 +11,10 @@ const mockTree = {
 };
 
 describe("TreeDetail Component", () => {
+    beforeEach(() => {
+        sessionStorage.setItem('token', 'mock-token');
+        fetch.resetMocks();
+    });
     test("renders without crashing", () => {
         render(<TreeDetail />);
         expect(screen.getByText(/Selecteer een boom om de details te bekijken./i)).toBeInTheDocument();
@@ -18,7 +22,7 @@ describe("TreeDetail Component", () => {
 
     test("displays tree details when a tree is selected", () => {
         render(<TreeDetail selectedTree={mockTree} />);
-        
+
         expect(screen.getByText(/Boom #1/i)).toBeInTheDocument();
         expect(screen.getByText(/Een eikenboom./i)).toBeInTheDocument();
         expect(screen.getByText(/20 meter/i)).toBeInTheDocument();
@@ -34,7 +38,7 @@ describe("TreeDetail Component", () => {
         const onCloseMock = jest.fn();
         render(<TreeDetail selectedTree={mockTree} onClose={onCloseMock} />);
 
-        const closeButton = screen.getByRole("button");
+        const closeButton = screen.getByAltText("Close");
         fireEvent.click(closeButton);
 
         expect(onCloseMock).toHaveBeenCalledTimes(1);
@@ -42,11 +46,21 @@ describe("TreeDetail Component", () => {
 
     test("displays the correct image sources", () => {
         render(<TreeDetail selectedTree={mockTree} />);
-        
+
         const treeImage = screen.getByAltText("tree");
         const closeButtonImage = screen.getByAltText("Close");
 
         expect(treeImage).toHaveAttribute("src", "tree-icon.png");
         expect(closeButtonImage).toHaveAttribute("src", "close.png");
+    });
+    test("calls the onDelete function when delete button is clicked", () => {
+        const onDeleteMock = jest.fn();
+        const onCloseMock = jest.fn();
+        render(<TreeDetail selectedTree={mockTree} onClose={onCloseMock} onDelete={onDeleteMock} />);
+
+        const deleteButton = screen.getByAltText("Delete");
+        fireEvent.click(deleteButton);
+
+        expect(onDeleteMock).toHaveBeenCalledTimes(1);
     });
 });
