@@ -32,7 +32,7 @@ const MobileTreeDetailView = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={infoIcon} style={styles.info}/>
+      <Image source={infoIcon} style={styles.info} />
       <Image source={treeIcon} style={styles.image} />
       <Text style={styles.treeId}>Boom #{tree.id}</Text>
       <View style={styles.dataContainer}>
@@ -48,6 +48,7 @@ const MobileTreeDetailView = ({ route }) => {
             <View style={styles.dataItemContainer}>
               <Text style={styles.dataLabel}>Height:</Text>
               <TextInput
+                testID="heightInput"
                 style={styles.dataInput}
                 keyboardType="numeric"
                 value={height}
@@ -59,6 +60,7 @@ const MobileTreeDetailView = ({ route }) => {
             <View style={styles.dataItemContainer}>
               <Text style={styles.dataLabel}>Diameter:</Text>
               <TextInput
+                testID="diameterInput"
                 style={styles.dataInput}
                 keyboardType="numeric"
                 value={diameter}
@@ -69,13 +71,13 @@ const MobileTreeDetailView = ({ route }) => {
             </View>
           </View>
         )}
-        <Text style={styles.dataItem}>Coordinates: {tree.latitude}, {tree.longitude}</Text> 
+        <Text style={styles.dataItem}>Coordinates: {tree.latitude}, {tree.longitude}</Text>
         {token &&
           <View>
-            <TouchableOpacity style={styles.buttons} onPress={handleUpdate}>
+            <TouchableOpacity testID="updateOpacity" style={styles.buttons} onPress={handleUpdate}>
               <Text style={styles.buttonsText}>Update</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttons} onPress={handleDelete}>
+            <TouchableOpacity testID="verwijderOpacity" style={styles.buttons} onPress={handleDelete}>
               <Text style={styles.buttonsText}>Verwijder</Text>
             </TouchableOpacity>
           </View>

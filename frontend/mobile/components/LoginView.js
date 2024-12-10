@@ -69,10 +69,10 @@ const LoginView = () => {
                     />
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <TouchableOpacity testID='loginOpacity' style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogout}>
+            <TouchableOpacity testID='logoutOpacity' style={styles.loginButton} onPress={handleLogout}>
                 <Text style={styles.loginButtonText}>Logout</Text>
             </TouchableOpacity>
         </View>
