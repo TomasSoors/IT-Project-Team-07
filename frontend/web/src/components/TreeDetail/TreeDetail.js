@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './TreeDetail.css';
 
-const TreeDetail = ({ selectedTree, onClose }) => {
+const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
+
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    useEffect(() => {
+        const verifyToken = async () => {
+            const token = sessionStorage.getItem('token');
+            if (!token) return;
+            try {
+                const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+                const response = await fetch(`${baseUrl}/verify-token/${token}`, {
+                    method: 'GET',
+                });
+
+                if (response.ok) {
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                console.error("Er is een fout opgetreden bij het verifiëren van de token:", error);
+                setIsAuthenticated(false);
+            }
+        };
+
+        verifyToken();
+    }, []);
     return (
         <div className="container">
             <div className="card">
@@ -14,6 +39,15 @@ const TreeDetail = ({ selectedTree, onClose }) => {
                             alt="Close"
                         />
                     </button>
+                    {isAuthenticated &&
+                        <button onClick={onDelete} className="delete-button">
+                            <img
+                                style={{ width: "40px", height: "40px" }}
+                                src="delete.png"
+                                alt="Delete"
+                            />
+                        </button>
+                    }
                     <img
                         src="tree-icon.png"
                         alt="tree"

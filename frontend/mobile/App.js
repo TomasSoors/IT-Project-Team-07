@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MobileMapView from './components/MobileMapView';
 import TreeListView from './components/TreeListView';
 import MobileTreeDetailView from './components/MobileTreeDetailView';
+import LoginView from './components/LoginView';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -36,6 +37,8 @@ const App = () => {
               iconName = focused ? 'map' : 'map-outline';
             } else if (route.name === 'List') {
               iconName = focused ? 'list' : 'list-outline';
+            } else if (route.name === 'Login') {
+              iconName = focused? 'person' : 'person';
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -50,6 +53,7 @@ const App = () => {
       >
         <Tab.Screen name="Map" component={MapStack} options={{headerShown: false}} />
         <Tab.Screen name="List" component={ListStack} options={{headerShown: false}}/>
+        <Tab.Screen name="Login" component={LoginView} options={{headerShown: false}} />
       </Tab.Navigator>
     </NavigationContainer>
   );
