@@ -68,6 +68,30 @@ const data = {
       console.error("Error in deleteTree:", error);
     }
   },
+
+  async updateTree(tree, token) {
+    try {
+      const response = await fetch(`${baseUrl}/trees/${tree.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          height: tree.height,
+          diameter: tree.diameter
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating tree:", errorData);
+        throw new Error("Failed to update tree.");
+      }
+    } catch (error) {
+      console.error("Error in updateTree:", error);
+    }
+  }
 };
 
 export default data;
