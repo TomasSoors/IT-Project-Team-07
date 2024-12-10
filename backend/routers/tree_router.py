@@ -13,6 +13,10 @@ class TreeCreate(BaseModel):
     latitude: float
     longitude: float
 
+class TreeUpdate(BaseModel):
+    height: float | None = None
+    diameter: float | None = None
+
 @router.get("/trees")
 def get_trees(db: Session = Depends(get_db)):
     return db.query(Tree).all()
@@ -40,3 +44,14 @@ def delete_tree(tree_id: int, db: Session = Depends(get_db)):
     db.delete(db_tree)
     db.commit()
     return {"message": "Tree deleted successfully"}
+
+@router.put("/trees/{tree_id}")
+def update_tree(tree_id: int, tree: TreeUpdate, db: Session = Depends(get_db)):	
+    db_tree = db.query(Tree).filter(Tree.id == tree_id).first()
+    if not db_tree:
+        raise HTTPException(status_code=404, detail="Tree not found")
+    db_tree.height = tree.height
+    db_tree.diameter = tree.diameter
+    db.commit()
+    db.refresh(db_tree)
+    return db_tree

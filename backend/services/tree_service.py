@@ -22,3 +22,13 @@ def delete_tree(db: Session, tree_id: int):
     db.delete(db_tree)
     db.commit()
     return {"message": "Tree deleted successfully"}
+
+def update_tree(db: Session, tree_id: int, height: int, diameter: int):
+    db_tree = db.query(Tree).filter(Tree.id == tree_id).first()
+    if not db_tree:
+        raise HTTPException(status_code=404, detail="Tree not found")
+    db_tree.height = height
+    db_tree.diameter = diameter
+    db.commit()
+    db.refresh(db_tree)
+    return db_tree
