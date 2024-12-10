@@ -4,11 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import logo from '../assets/logo.png';
 import login from '../../shared/index';
 import * as SecureStore from 'expo-secure-store';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginView = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const navigation = useNavigation();
 
     const handleLogin = async () => {
         try {
@@ -16,6 +18,7 @@ const LoginView = () => {
             if (token) {
                 Alert.alert('Login Successful', 'You have successfully logged in!');
                 SecureStore.setItemAsync('token', token);
+                navigation.navigate('Map')
             }
         } catch (error) {
             Alert.alert('Login Failed', error.message);
@@ -26,6 +29,7 @@ const LoginView = () => {
         try {
             await SecureStore.deleteItemAsync('token');
             Alert.alert("Successfully logged out.")
+            navigation.navigate('Map')
         } catch (error) {
             console.error("Er is een fout opgetreden bij het revoken van de token:", error);
         }
