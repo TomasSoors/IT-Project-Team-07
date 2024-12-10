@@ -11,6 +11,8 @@ class Tree(Base):
     description = Column(String(255), nullable=True)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
+    height = Column(Float, nullable=True)
+    diameter = Column(Float, nullable=True)
     added_at = Column(DateTime, default=datetime.utcnow)
     
 Base.metadata.create_all(bind=engine)
