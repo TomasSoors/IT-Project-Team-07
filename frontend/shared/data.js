@@ -16,9 +16,8 @@ const data = {
   },
 
   // Toevoegen van bomen via bestand
-  async addTree(tree) {
+  async addTree(tree, token) {
     try {
-      const token = sessionStorage.getItem('token');
       const response = await fetch(`${baseUrl}/trees`, {
         method: 'POST',
         headers: {
@@ -45,9 +44,8 @@ const data = {
     }
   },
 
-  async deleteTree(tree) {
+  async deleteTree(tree, token) {
     try {
-      const token = sessionStorage.getItem('token');
       const response = await fetch(`${baseUrl}/trees/${tree.id}`, {
         method: 'DELETE',
         headers: {
