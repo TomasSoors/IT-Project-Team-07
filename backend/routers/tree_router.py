@@ -1,14 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, func
-from database import get_db
-from models.tree_model import Tree
 from services.token_service import verify_token
+from services.tree_service import create_tree, delete_tree, update_tree, get_all_trees
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from database import get_db
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+BEARER_PREFIX = "Bearer "
+AUTH_ERROR = "Missing or invalid Authorization header."
 
 
 class TreeCreate(BaseModel):
@@ -17,63 +19,59 @@ class TreeCreate(BaseModel):
     latitude: float
     longitude: float
 
+
 class TreeUpdate(BaseModel):
     height: float | None = None
     diameter: float | None = None
 
+
 @router.get("/trees")
 def get_trees(db: Session = Depends(get_db)):
-    return db.query(Tree).all()
+    return get_all_trees(db)
 
 
 @router.post("/trees")
-def create_tree(
+def create_tree_route(
     tree: TreeCreate,
     request: Request,
     db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
+    token_param: str = Depends(oauth2_scheme),
 ):
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        raise HTTPException(
-            status_code=401, detail="Missing or invalid Authorization header."
-        )
-    token = auth_header.split(" ")[1]
-    verify_token(token=token, db=db)
-    radius = 0.0001
-    db_tree = (
-        db.query(Tree)
-        .filter(
-            func.abs(Tree.latitude - tree.latitude) < radius,
-            func.abs(Tree.longitude - tree.longitude) < radius,
-        )
-        .first()
-    )
-    if db_tree:
-        raise HTTPException(status_code=404, detail="Tree already exists!")
-    db_tree = Tree(**tree.dict())
-    db.add(db_tree)
-    db.commit()
-    db.refresh(db_tree)
-    return db_tree
+    if not auth_header or not auth_header.startswith(BEARER_PREFIX):
+        raise HTTPException(status_code=401, detail=AUTH_ERROR)
+    token = auth_header[len(BEARER_PREFIX):]
+    print(token)
+    verify_token(token, db)
+    return create_tree(tree, db)
 
 
 @router.delete("/trees/{tree_id}")
-def delete_tree(tree_id: int, db: Session = Depends(get_db)):
-    db_tree = db.query(Tree).filter(Tree.id == tree_id).first()
-    if not db_tree:
-        raise HTTPException(status_code=404, detail="Tree not found")
-    db.delete(db_tree)
-    db.commit()
-    return {"message": "Tree deleted successfully"}
+def delete_tree_route(
+    tree_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    token_param: str = Depends(oauth2_scheme),
+):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith(BEARER_PREFIX):
+        raise HTTPException(status_code=401, detail=AUTH_ERROR)
+    token = auth_header[len(BEARER_PREFIX):]
+    verify_token(token, db)
+    return delete_tree(tree_id, db)
+
 
 @router.put("/trees/{tree_id}")
-def update_tree(tree_id: int, tree: TreeUpdate, db: Session = Depends(get_db)):	
-    db_tree = db.query(Tree).filter(Tree.id == tree_id).first()
-    if not db_tree:
-        raise HTTPException(status_code=404, detail="Tree not found")
-    db_tree.height = tree.height
-    db_tree.diameter = tree.diameter
-    db.commit()
-    db.refresh(db_tree)
-    return db_tree
+def update_tree_route(
+    tree_id: int,
+    tree: TreeUpdate,
+    request: Request,
+    db: Session = Depends(get_db),
+    token_param: str = Depends(oauth2_scheme),
+):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith(BEARER_PREFIX):
+        raise HTTPException(status_code=401, detail=AUTH_ERROR)
+    token = auth_header[len(BEARER_PREFIX):]
+    verify_token(token, db)
+    return update_tree(tree_id, tree.height, tree.diameter, db)
