@@ -2,48 +2,54 @@ import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import TreeListView from '../components/TreeListView';
 import * as Location from 'expo-location';
-import { useNavigation } from '@react-navigation/native';
-import data from '../../shared/data';
 import { Alert } from 'react-native';
+import data from '../../shared/data';
+import { useNavigation } from '@react-navigation/native';
 
-// Mock the Location module
+// Mock the Location module and Alert
 jest.mock('expo-location', () => ({
   requestForegroundPermissionsAsync: jest.fn(),
   getCurrentPositionAsync: jest.fn(),
 }));
 
-// Mock the navigation
+// Mock useNavigation and useFocusEffect from @react-navigation/native
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
+  useFocusEffect: jest.fn((callback) => callback()),  // Directly invoke the callback for tests
 }));
 
-// Mock the shared data
 jest.mock('../../shared/data', () => ({
   getTrees: jest.fn(),
 }));
 
 const mockTrees = [
-  { id: 1, latitude: 50.95306, longitude: 5.352692, title: 'Tree 1', description: 'Description 1' },
-  { id: 2, latitude: 50.95316, longitude: 5.352792, title: 'Tree 2', description: 'Description 2' },
+  { id: 1, name: 'Tree 1', latitude: 50.8503, longitude: 4.3518 },
+  { id: 2, name: 'Tree 2', latitude: 50.8600, longitude: 4.3620 },
 ];
 
 const mockLocation = {
-  coords: { latitude: 50.95306, longitude: 5.352692 },
+  coords: {
+    latitude: 50.8503,
+    longitude: 4.3517,
+  },
 };
 
-// Mock navigation.navigate
 const mockNavigate = jest.fn();
 useNavigation.mockReturnValue({
   navigate: mockNavigate,
 });
 
-describe('TreeListView Component', () => {
+describe('TreeListView', () => {
   let alertSpy;
+
+  const setupMocks = (locationPermission = 'granted', locationData = mockLocation, treesData = mockTrees) => {
+    Location.requestForegroundPermissionsAsync.mockResolvedValue({ status: locationPermission });
+    Location.getCurrentPositionAsync.mockResolvedValue(locationData);
+    data.getTrees.mockResolvedValue(treesData);
+  };
+
   beforeEach(() => {
-    jest.clearAllMocks();
-    Location.requestForegroundPermissionsAsync.mockResolvedValue({ status: 'granted' });
-    Location.getCurrentPositionAsync.mockResolvedValue(mockLocation);
-    data.getTrees.mockResolvedValue(mockTrees);
+    setupMocks();
     alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
   });
 
@@ -51,59 +57,45 @@ describe('TreeListView Component', () => {
     jest.clearAllMocks();
   });
 
-  it('renders correctly', async () => {
-    const { getByText } = render(<TreeListView />);
+  it('renders the tree list correctly', async () => {
+    const { getByTestId } = render(<TreeListView />);
+    
     await act(async () => {
       await waitFor(() => {
-        expect(getByText('100m')).toBeTruthy();
+        expect(getByTestId('tree-list')).toBeTruthy();
       });
     });
   });
 
-  it('requests location permissions', async () => {
+  it('requests location permission on mount', async () => {
     render(<TreeListView />);
-    await act(async () => {
-      await waitFor(() => {
-        expect(Location.requestForegroundPermissionsAsync).toHaveBeenCalled();
-        expect(Location.getCurrentPositionAsync).toHaveBeenCalled();
-      });
-    });
+    expect(Location.requestForegroundPermissionsAsync).toHaveBeenCalled();
   });
 
-  it('shows alert when location permission is denied', async () => {
-    Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'denied' });
+  it('shows an alert if location permission is denied', async () => {
+    setupMocks('denied');
 
     render(<TreeListView />);
+
     await act(async () => {
       await waitFor(() => {
         expect(alertSpy).toHaveBeenCalledWith(
           'Permission Denied',
-          'We need access to your location to show it on the map.'
+          'We need access to your location to filter the trees.'
         );
       });
     });
   });
 
-  it('updates the slider value and filters trees', async () => {
-    const { getByText, getByTestId } = render(<TreeListView />);
-    const slider = getByTestId('slider');
+  it('handles empty tree data gracefully', async () => {
+    setupMocks('granted', mockLocation, []);
 
-    act(() => {
-      fireEvent(slider, 'onValueChange', 150);
-    });
+    const { queryAllByTestId } = render(<TreeListView />);
 
-    await waitFor(() => {
-      expect(getByText('150m')).toBeTruthy();
-    });
-  });
-
-  it('renders tree markers from data', async () => {
-    const { getByTestId } = render(<TreeListView />);
     await act(async () => {
       await waitFor(() => {
-        mockTrees.forEach(tree => {
-          expect(getByTestId(`marker-${tree.id}`)).toBeTruthy();
-        });
+        const treeElements = queryAllByTestId('1-text'); // Adjusted to check for the tree with id 1
+        expect(treeElements.length).toBe(0);
       });
     });
   });

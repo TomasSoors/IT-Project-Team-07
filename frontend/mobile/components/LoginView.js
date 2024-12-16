@@ -38,43 +38,45 @@ const LoginView = () => {
     return (
         <View style={styles.container}>
             <Image source={logo} style={styles.logo} />
-            <Text style={styles.title}>Login</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                keyboardType="default"
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={username}
-                onChangeText={setUsername}
-            />
-            <View style={styles.passwordContainer}>
+            <View style={styles.loginContainer}>
+                <Text style={styles.title}>Login</Text>
                 <TextInput
-                    style={{ flex: 1 }}
-                    placeholder="Password"
-                    secureTextEntry={!showPassword}
+                    style={styles.input}
+                    placeholder="Username"
+                    keyboardType="default"
                     autoCapitalize="none"
                     autoCorrect={false}
-                    value={password}
-                    onChangeText={setPassword}
+                    value={username}
+                    onChangeText={setUsername}
                 />
-                <TouchableOpacity
-                    onPress={() => setShowPassword(!showPassword)}
-                    style={styles.eyeIcon}
-                >
-                    <Ionicons
-                        name={showPassword ? 'eye' : 'eye-off'}
-                        size={24}
-                        color="gray"
+                <View style={styles.passwordContainer}>
+                    <TextInput
+                        style={{ flex: 1 }}
+                        placeholder="Password"
+                        secureTextEntry={!showPassword}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        value={password}
+                        onChangeText={setPassword}
                     />
+                    <TouchableOpacity
+                        onPress={() => setShowPassword(!showPassword)}
+                        style={styles.eyeIcon}
+                    >
+                        <Ionicons
+                            name={showPassword ? 'eye' : 'eye-off'}
+                            size={24}
+                            color="gray"
+                        />
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity testID='loginOpacity' style={styles.loginButton} onPress={handleLogin}>
+                    <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity testID='logoutOpacity' style={styles.loginButton} onPress={handleLogout}>
+                    <Text style={styles.loginButtonText}>Logout</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogout}>
-                <Text style={styles.loginButtonText}>Logout</Text>
-            </TouchableOpacity>
         </View>
     );
 };
@@ -84,6 +86,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#f5f5f5',
     },
     logo: {
         width: 100,
@@ -94,25 +97,25 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 40,
+        marginBottom: 20,
         color: '#AE9A64',
     },
     input: {
-        width: '80%',
+        width: '100%',
         height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 20,
+        borderRadius: 5,
         paddingHorizontal: 10,
         marginVertical: 10,
     },
     passwordContainer: {
-        width: '80%',
+        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 20,
+        borderRadius: 5,
         marginVertical: 10,
     },
     eyeIcon: {
@@ -124,11 +127,23 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         marginTop: 20,
+        width: '100%',
+        alignItems: 'center',
     },
     loginButtonText: {
         color: 'white',
         fontWeight: 'bold',
     },
+    loginContainer: {
+        width: '80%',
+        paddingHorizontal: 20,
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        padding: 8,
+        borderRadius: 8,
+        marginBottom: 20,
+    },
 });
+
 
 export default LoginView;

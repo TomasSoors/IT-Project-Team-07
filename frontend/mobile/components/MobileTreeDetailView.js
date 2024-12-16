@@ -5,12 +5,14 @@ import treeIcon from '../assets/tree-icon.png';
 import infoIcon from '../assets/info.png';
 import * as SecureStore from 'expo-secure-store';
 import data from '../../shared/data';
+import { useNavigation } from '@react-navigation/native';
 
 const MobileTreeDetailView = ({ route }) => {
   const { tree } = route.params;
   const [token, setToken] = useState(null);
   const [height, setHeight] = useState(tree.height ? `${tree.height}` : '0');
   const [diameter, setDiameter] = useState(tree.diameter ? `${tree.diameter}` : '0');
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -24,15 +26,17 @@ const MobileTreeDetailView = ({ route }) => {
   const handleUpdate = async () => {
     const updatedTree = { ...tree, height: parseFloat(height), diameter: parseFloat(diameter) };
     data.updateTree(updatedTree, token);
+    navigation.goBack();
   };
 
   const handleDelete = async () => {
     data.deleteTree(tree.id, token);
+    navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      <Image source={infoIcon} style={styles.info}/>
+      <Image source={infoIcon} style={styles.info} />
       <Image source={treeIcon} style={styles.image} />
       <Text style={styles.treeId}>Boom #{tree.id}</Text>
       <View style={styles.dataContainer}>
@@ -48,6 +52,7 @@ const MobileTreeDetailView = ({ route }) => {
             <View style={styles.dataItemContainer}>
               <Text style={styles.dataLabel}>Height:</Text>
               <TextInput
+                testID="heightInput"
                 style={styles.dataInput}
                 keyboardType="numeric"
                 value={height}
@@ -59,6 +64,7 @@ const MobileTreeDetailView = ({ route }) => {
             <View style={styles.dataItemContainer}>
               <Text style={styles.dataLabel}>Diameter:</Text>
               <TextInput
+                testID="diameterInput"
                 style={styles.dataInput}
                 keyboardType="numeric"
                 value={diameter}
@@ -69,13 +75,13 @@ const MobileTreeDetailView = ({ route }) => {
             </View>
           </View>
         )}
-        <Text style={styles.dataItem}>Coordinates: {tree.latitude}, {tree.longitude}</Text> 
+        <Text style={styles.dataItem}>Coordinates: {tree.latitude}, {tree.longitude}</Text>
         {token &&
           <View>
-            <TouchableOpacity style={styles.buttons} onPress={handleUpdate}>
+            <TouchableOpacity testID="updateOpacity" style={styles.buttons} onPress={handleUpdate}>
               <Text style={styles.buttonsText}>Update</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttons} onPress={handleDelete}>
+            <TouchableOpacity testID="verwijderOpacity" style={styles.buttons} onPress={handleDelete}>
               <Text style={styles.buttonsText}>Verwijder</Text>
             </TouchableOpacity>
           </View>
