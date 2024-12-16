@@ -88,6 +88,16 @@ jobs:
         run: |
           cd frontend/mobile
           npm run test -- --coverage
+      
+      - name: Install Node.js Dependencies for shared
+        run: |
+          cd frontend/shared
+          npm install
+
+      - name: Run React.js Tests with Coverage for shared
+        run: |
+          cd frontend/shared
+          npm run test -- --coverage
 
       - name: Setup Python
         uses: actions/setup-python@v4
