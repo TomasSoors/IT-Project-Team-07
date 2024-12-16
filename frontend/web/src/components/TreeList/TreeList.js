@@ -17,7 +17,13 @@ const TreeList = ({ treeList, onClose, radius, onRadiusChange, selectedTreeFromL
     const handleTreeDetailClick = (event) => {
         event.stopPropagation();
         onTreeDetailSelect(selectedTreeObject);
-    }
+    };
+
+    const handleKeyDown = (event, tree) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            handleTreeClick(tree);
+        }
+    };
 
     return (
         <div className="container">
@@ -44,17 +50,21 @@ const TreeList = ({ treeList, onClose, radius, onRadiusChange, selectedTreeFromL
                             <div
                                 key={tree.id}
                                 className={`tree-object ${selectedTree === tree.id ? 'selected' : ''}`}
-                                role="button"
-                                tabIndex={0}
-                                onClick={() => handleTreeClick(tree)}
                             >
-                                <img src='tree-icon.png' alt="boom" style={{ height: "40px", margin: "10px" }} />
-                                <p>Boom #{tree.id}</p>
-                                {selectedTree === tree.id && (
-                                    <button onClick={(event) => handleTreeDetailClick(event)}>
-                                        <img src='info-icon.png' alt="info" className="info-icon" />
-                                    </button>
-                                )}
+                                <button
+                                    className="tree-item-button"
+                                    aria-pressed={selectedTree === tree.id}
+                                    onClick={() => handleTreeClick(tree)}
+                                    onKeyDown={(event) => handleKeyDown(event, tree)}
+                                >
+                                    <img src='tree-icon.png' alt="boom" style={{ height: "40px", margin: "10px" }} />
+                                    <p>Boom #{tree.id}</p>
+                                    {selectedTree === tree.id && (
+                                        <button onClick={(event) => handleTreeDetailClick(event)}>
+                                            <img src='info-icon.png' alt="info" className="info-icon" />
+                                        </button>
+                                    )}
+                                </button>
                             </div>
                         ))}
                     </div>
@@ -79,4 +89,3 @@ TreeList.propTypes = {
 };
 
 export default TreeList;
-

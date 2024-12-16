@@ -19,7 +19,6 @@ const Login = () => {
     formDetails.append('username', username);
     formDetails.append('password', password);
     console.log(formDetails);
-    
 
     try {
       const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
@@ -38,8 +37,6 @@ const Login = () => {
         navigate('/map');
       } else if (response.status === 401) {
         setError('Ongeldige gebruikersnaam of wachtwoord.');
-      } else {
-        setError('Er is iets misgegaan. Probeer het opnieuw.');
       }
     } catch (error) {
       console.error('Error:', error);

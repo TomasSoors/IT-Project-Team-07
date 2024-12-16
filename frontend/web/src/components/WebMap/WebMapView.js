@@ -283,7 +283,6 @@ const MapView = ({ fetchTrees }) => {
         </div>
     );
 };
-
 MapView.propTypes = {
     fetchTrees: PropTypes.func.isRequired
 };

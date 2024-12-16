@@ -79,6 +79,15 @@
     ]
   },
   "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./src/**/*.{js,jsx,ts,tsx}",
+      "!src/index.js",
+      "!src/reportWebVitals.js",
+      "!src/setupTests.js",
+      "!**/*.test.{js,jsx}",
+      "!**/node_modules/**"
+    ],
     "setupFilesAfterEnv": [
       "./src/setupTests.js"
     ],
