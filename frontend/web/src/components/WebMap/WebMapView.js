@@ -164,7 +164,7 @@ const MapView = ({ fetchTrees }) => {
 
     const handleDeleteTree = async () => {
         if (selectedTree) {
-            const response = await data.deleteTree(selectedTree)
+            const response = await data.deleteTree(selectedTree.id)
             if (response.ok) {
                 Store.addNotification({
                     title: "Succesvol verwijderd!",
