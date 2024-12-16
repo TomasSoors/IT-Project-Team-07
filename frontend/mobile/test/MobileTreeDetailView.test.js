@@ -16,6 +16,14 @@ jest.mock('../../shared/data', () => ({
   deleteTree: jest.fn(),
 }));
 
+// Mocking navigation
+const mockNavigate = jest.fn();
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: mockNavigate,
+  }),
+}));
+
 describe('MobileTreeDetailView Component', () => {
   const tree = {
     id: 1,
@@ -37,10 +45,18 @@ describe('MobileTreeDetailView Component', () => {
   });
 
   it('renders correctly', async () => {
+    // Mock route props
+    const route = {
+      params: {
+        tree,
+      },
+    };
+
     const { getByText } = render(
-      <MobileTreeDetailView route={{ params: { tree } }} />
+      <MobileTreeDetailView route={route} />
     );
 
+    // Checking if the tree details are rendered correctly
     expect(getByText(`Boom #${tree.id}`)).toBeTruthy();
     expect(getByText(`Height: ${tree.height} m`)).toBeTruthy();
     expect(getByText(`Diameter: ${tree.diameter} cm`)).toBeTruthy();
