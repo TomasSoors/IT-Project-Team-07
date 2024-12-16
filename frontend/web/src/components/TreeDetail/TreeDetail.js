@@ -15,7 +15,7 @@ const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
                 const response = await fetch(`${BASE_URL}/verify-token/${token}`, {
                     method: 'GET',
                 });
-
+                
                 if (response.ok) {
                     setIsAuthenticated(true);
                 } else {

@@ -210,7 +210,7 @@ const MapView = ({ fetchTrees }) => {
 
     const handleDeleteTree = async () => {
         if (selectedTree) {
-            const response = await data.deleteTree(selectedTree)
+            const response = await data.deleteTree(selectedTree.id)
             if (response.ok) {
                 Store.addNotification({
                     title: "Succesvol verwijderd!",
@@ -283,9 +283,10 @@ const MapView = ({ fetchTrees }) => {
         </div>
     );
 };
-
 MapView.propTypes = {
-    fetchTrees: PropTypes.func.isRequired,
+    fetchTrees: PropTypes.func.isRequired
+};
+MapEvents.propTypes = {
     onClick: PropTypes.func.isRequired,
 };
 
