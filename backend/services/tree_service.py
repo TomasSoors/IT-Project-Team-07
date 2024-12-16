@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from database import SessionLocal
 
 
+
 def create_tree(tree: Tree, db: Session):
     radius = 0.0001
     db_tree = (
@@ -45,4 +46,4 @@ def update_tree(tree_id: int, height: int, diameter: int, db: Session):
     db_tree.diameter = diameter
     db.commit()
     db.refresh(db_tree)
-    return {"message": "Tree updated successfully"}
+    return db_tree
