@@ -56,7 +56,14 @@
 
 .info-icon {
     height: 40px;
+
+}
+
+.tree-object button {
+    height: 40px;
     margin-left: auto;
     margin-right: 10px;
+    background: none;
+    border: none;
 }
 
