@@ -44,13 +44,15 @@ const TreeList = ({ treeList, onClose, radius, onRadiusChange, selectedTreeFromL
                             <div
                                 key={tree.id}
                                 className={`tree-object ${selectedTree === tree.id ? 'selected' : ''}`}
+                                role="button"
+                                tabIndex={0}
                                 onClick={() => handleTreeClick(tree)}
                             >
                                 <img src='tree-icon.png' alt="boom" style={{ height: "40px", margin: "10px" }} />
                                 <p>Boom #{tree.id}</p>
                                 {selectedTree === tree.id && (
                                     <button onClick={(event) => handleTreeDetailClick(event)}>
-                                        <img src='info-icon.png' alt="info" className="info-icon"/>
+                                        <img src='info-icon.png' alt="info" className="info-icon" />
                                     </button>
                                 )}
                             </div>
