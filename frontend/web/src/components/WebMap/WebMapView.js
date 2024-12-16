@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, useMapEvents, Marker } from 'react-leaflet';
 import data from '../../../../shared/data';
 import 'leaflet/dist/leaflet.css';
 import Navbar from '../Navbar/Navbar';
@@ -145,6 +145,7 @@ const MapView = ({ fetchTrees }) => {
     const [center] = useState([50.95306, 5.352692]);
     const [zoom] = useState(16);
     const [selectedTree, setSelectedTree] = useState(null);
+    const [clickPosition, setClickPosition] = useState(null);
 
     const fetchTreesData = async () => {
         const fetchedTrees = await data.getTrees();
@@ -160,6 +161,19 @@ const MapView = ({ fetchTrees }) => {
 
     const handleCloseDetail = () => {
         setSelectedTree(null);
+    };
+
+    const handleMapClick = (e) => {
+        setClickPosition(e.latlng);
+    };
+
+    const MapEvents = ({ onClick }) => {
+        useMapEvents({
+            click: (e) => {
+                onClick(e);
+            },
+        });
+        return null;
     };
 
     const handleDeleteTree = async () => {
@@ -207,8 +221,9 @@ const MapView = ({ fetchTrees }) => {
                                 id={`dynamic-marker-${tree.id}`}
                             />
                         ))}
+                        <MapEvents onClick={handleMapClick} />
+                        {clickPosition && <Marker position={clickPosition} />}
                     </MapContainer>
-
                 </div>
                 {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} id="tree-detail" />}
             </div>
