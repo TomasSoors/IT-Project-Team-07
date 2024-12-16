@@ -179,13 +179,6 @@ const MapView = ({ fetchTrees }) => {
         setSelectedTreeFromList(tree);
     };
 
-    const handleTreeDetailSelect = (tree) => {
-        setSelectedTree(tree);
-        setTreesInCircle([]);
-        setClickPosition(null);
-        setSelectedTreeFromList(null);
-    }
-
     const handleCloseDetail = () => {
         setSelectedTree(null);
         setTreesInCircle([]);
@@ -283,7 +276,7 @@ const MapView = ({ fetchTrees }) => {
                         onRadiusChange={handleRadiusChange}
                         selectedTreeFromList={selectedTreeFromList}
                         onTreeListSelect={handleTreeListSelect}
-                        onTreeDetailSelect={handleTreeDetailSelect}
+                        onTreeDetailSelect={handleTreeSelect}
                     />
                 )}
             </div>
@@ -293,6 +286,7 @@ const MapView = ({ fetchTrees }) => {
 
 MapView.propTypes = {
     fetchTrees: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
 };
 
 export default MapView;

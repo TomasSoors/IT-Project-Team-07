@@ -49,7 +49,9 @@ const TreeList = ({ treeList, onClose, radius, onRadiusChange, selectedTreeFromL
                                 <img src='tree-icon.png' alt="boom" style={{ height: "40px", margin: "10px" }} />
                                 <p>Boom #{tree.id}</p>
                                 {selectedTree === tree.id && (
-                                    <img src='info-icon.png' alt="info" className="info-icon" onClick={(event) => handleTreeDetailClick(event)} />
+                                    <button onClick={(event) => handleTreeDetailClick(event)}>
+                                        <img src='info-icon.png' alt="info" className="info-icon"/>
+                                    </button>
                                 )}
                             </div>
                         ))}
@@ -71,6 +73,7 @@ TreeList.propTypes = {
     onRadiusChange: PropTypes.func.isRequired,
     selectedTreeFromList: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onTreeListSelect: PropTypes.func.isRequired,
+    onTreeDetailSelect: PropTypes.func.isRequired,
 };
 
 export default TreeList;
