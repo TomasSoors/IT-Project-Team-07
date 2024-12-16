@@ -3,31 +3,33 @@ import PropTypes from 'prop-types';
 import './TreeDetail.css';
 
 const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
-
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const BASE_URL = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+
     useEffect(() => {
         const verifyToken = async () => {
             const token = sessionStorage.getItem('token');
             if (!token) return;
             try {
-                const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
-                const response = await fetch(`${baseUrl}/verify-token/${token}`, {
+                const response = await fetch(`${BASE_URL}/verify-token/${token}`, {
                     method: 'GET',
                 });
-
+                
                 if (response.ok) {
                     setIsAuthenticated(true);
                 } else {
                     setIsAuthenticated(false);
                 }
             } catch (error) {
-                console.error("Er is een fout opgetreden bij het verifiëren van de token:", error);
+                console.error("Error verifying token:", error);
                 setIsAuthenticated(false);
             }
         };
 
         verifyToken();
-    }, []);
+    }, [BASE_URL]);
+
     return (
         <div className="container">
             <div className="card">
@@ -39,7 +41,7 @@ const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
                             alt="Close"
                         />
                     </button>
-                    {isAuthenticated &&
+                    {isAuthenticated && (
                         <button onClick={onDelete} className="delete-button">
                             <img
                                 style={{ width: "40px", height: "40px" }}
@@ -47,7 +49,7 @@ const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
                                 alt="Delete"
                             />
                         </button>
-                    }
+                    )}
                     <img
                         src="tree-icon.png"
                         alt="tree"
@@ -72,7 +74,7 @@ const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
             </div>
         </div>
     );
-}
+};
 
 TreeDetail.propTypes = {
     selectedTree: PropTypes.shape({
@@ -83,6 +85,7 @@ TreeDetail.propTypes = {
         longitude: PropTypes.number.isRequired,
     }),
     onClose: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
 };
 
 TreeDetail.defaultProps = {
@@ -90,4 +93,3 @@ TreeDetail.defaultProps = {
 };
 
 export default TreeDetail;
-

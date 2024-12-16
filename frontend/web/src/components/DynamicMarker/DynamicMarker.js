@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Marker, useMap, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import treeLogo from '../../../../shared/images/tree-icon.png';
 import selectedTreeLogo from '../../../../shared/images/tree-icon-selected.png';
-
 import PropTypes from 'prop-types';
-
 
 function getIconSize(zoom) {
     if (zoom >= 16) return [40, 40];
@@ -15,12 +13,14 @@ function getIconSize(zoom) {
     return [0, 0];
 }
 
-const DynamicMarker = ({ tree, isSelected, onTreeSelect }) => {
+const DynamicMarker = ({ tree, isSelected, selectedTreeFromList, onTreeSelect }) => {
     const map = useMap();
     const [iconSize, setIconSize] = useState(getIconSize(map.getZoom()));
 
+    const isSelectedFromList = selectedTreeFromList === tree.id; // Controleer of boom geselecteerd is vanuit lijst
+
     const treeIcon = L.icon({
-        iconUrl: isSelected ? selectedTreeLogo : treeLogo,
+        iconUrl: isSelected || isSelectedFromList ? selectedTreeLogo : treeLogo,
         iconSize: iconSize,
         iconAnchor: [iconSize[0] / 2, iconSize[1]],
         popupAnchor: [0, -iconSize[1]],
@@ -42,15 +42,12 @@ const DynamicMarker = ({ tree, isSelected, onTreeSelect }) => {
             eventHandlers={{
                 click: () => {
                     map.flyTo([tree.latitude, tree.longitude], 16, { duration: 0.5 });
-                    onTreeSelect(tree); 
+                    onTreeSelect(tree); // Meld selectie aan oudercomponent
                 },
             }}
-            id={`dynamic-marker-${tree.id}`}
-        >
-        </Marker>
+        />
     );
 };
-
 
 DynamicMarker.propTypes = {
     tree: PropTypes.shape({
@@ -59,6 +56,7 @@ DynamicMarker.propTypes = {
         longitude: PropTypes.number.isRequired,
     }).isRequired,
     isSelected: PropTypes.bool.isRequired,
+    selectedTreeFromList: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onTreeSelect: PropTypes.func.isRequired,
 };
 

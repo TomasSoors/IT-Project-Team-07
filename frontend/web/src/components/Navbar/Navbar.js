@@ -11,7 +11,6 @@ const Navbar = () => {
     const verifyToken = async () => {
       const token = sessionStorage.getItem('token');
       if (!token) return;
-
       try {
         const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
         const response = await fetch(`${baseUrl}/verify-token/${token}`, {

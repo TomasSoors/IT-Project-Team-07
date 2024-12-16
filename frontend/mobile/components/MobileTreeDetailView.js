@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import treeIcon from '../assets/tree-icon.png';
 import infoIcon from '../assets/info.png';
 import * as SecureStore from 'expo-secure-store';
+import data from '../../shared/data';
+import { useNavigation } from '@react-navigation/native';
 
 const MobileTreeDetailView = ({ route }) => {
   const { tree } = route.params;
   const [token, setToken] = useState(null);
-  const [height, setHeight] = useState(`${tree.height ?? 0}`);
-  const [diameter, setDiameter] = useState(`${tree.diameter ?? 0}`);
+  const [height, setHeight] = useState(tree.height ? `${tree.height}` : '0');
+  const [diameter, setDiameter] = useState(tree.diameter ? `${tree.diameter}` : '0');
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -20,9 +23,20 @@ const MobileTreeDetailView = ({ route }) => {
     fetchToken();
   }, []);
 
+  const handleUpdate = async () => {
+    const updatedTree = { ...tree, height: parseFloat(height), diameter: parseFloat(diameter) };
+    data.updateTree(updatedTree, token);
+    navigation.goBack();
+  };
+
+  const handleDelete = async () => {
+    data.deleteTree(tree.id, token);
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
-      <Image source={infoIcon} style={styles.info}/>
+      <Image source={infoIcon} style={styles.info} />
       <Image source={treeIcon} style={styles.image} />
       <Text style={styles.treeId}>Boom #{tree.id}</Text>
       <View style={styles.dataContainer}>
@@ -38,6 +52,7 @@ const MobileTreeDetailView = ({ route }) => {
             <View style={styles.dataItemContainer}>
               <Text style={styles.dataLabel}>Height:</Text>
               <TextInput
+                testID="heightInput"
                 style={styles.dataInput}
                 keyboardType="numeric"
                 value={height}
@@ -49,17 +64,28 @@ const MobileTreeDetailView = ({ route }) => {
             <View style={styles.dataItemContainer}>
               <Text style={styles.dataLabel}>Diameter:</Text>
               <TextInput
+                testID="diameterInput"
                 style={styles.dataInput}
                 keyboardType="numeric"
                 value={diameter}
                 onChangeText={setDiameter}
                 placeholder="Diameter"
               />
-              <Text style={styles.dataUnit}>m</Text>
+              <Text style={styles.dataUnit}>cm</Text>
             </View>
           </View>
         )}
-        <Text style={styles.dataItem}>Coordinates: {tree.latitude}, {tree.longitude}</Text> 
+        <Text style={styles.dataItem}>Coordinates: {tree.latitude}, {tree.longitude}</Text>
+        {token &&
+          <View>
+            <TouchableOpacity testID="updateOpacity" style={styles.buttons} onPress={handleUpdate}>
+              <Text style={styles.buttonsText}>Update</Text>
+            </TouchableOpacity>
+            <TouchableOpacity testID="verwijderOpacity" style={styles.buttons} onPress={handleDelete}>
+              <Text style={styles.buttonsText}>Verwijder</Text>
+            </TouchableOpacity>
+          </View>
+        }
       </View>
     </View>
   );
@@ -145,7 +171,19 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     resizeMode: 'contain',
-  }
+  },
+  buttons: {
+    backgroundColor: '#AE9A64',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  buttonsText: {
+      color: 'white',
+      fontWeight: 'bold',
+  },
 });
 
 export default MobileTreeDetailView;

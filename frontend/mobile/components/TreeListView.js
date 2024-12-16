@@ -86,14 +86,14 @@ const TreeListView = () => {
         <Text style={styles.sliderText}>{sliderValue}m</Text>
       </View>
       <View style={styles.listContainerWrapper}>
-      <ScrollView style={styles.listContainer}>
+      <ScrollView testID='tree-list' style={styles.listContainer}>
         {filteredTrees.map((tree) => (
           <View key={tree.id} style={styles.listItem}>
             <Image source={treeIcon} style={styles.treeIcon} />
             <View style={styles.listTextContainer}>
-              <Text style={styles.listText}>
+              <Text testID={`${tree.id}-text`} style={styles.listText}>
                 Boom #{tree.id} - {tree.distance !== undefined ? `${tree.distance.toFixed(2)} meter verwijderd` : 'Distance unknown'}
-                <TouchableOpacity onPress={() => navigation.navigate('TreeDetails', { tree })}>
+                <TouchableOpacity testID={`${tree.id}-info`} onPress={() => navigation.navigate('TreeDetails', { tree })}>
                   <Image source={info} style={styles.info} />
                 </TouchableOpacity>
               </Text>

@@ -131,7 +131,7 @@ describe('MapView Component', () => {
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
-            expect(mockDeleteTree).toHaveBeenCalledWith(mockTrees[0]);
+            expect(mockDeleteTree).toHaveBeenCalledWith(mockTrees[0].id);
         });
         const notification = await screen.findByText(/Succesvol verwijderd!/i);
         expect(notification).toBeInTheDocument();

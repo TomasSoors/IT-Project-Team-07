@@ -16,9 +16,8 @@ const data = {
   },
 
   // Toevoegen van bomen via bestand
-  async addTree(tree) {
+  async addTree(tree, token) {
     try {
-      const token = sessionStorage.getItem('token');
       const response = await fetch(`${baseUrl}/trees`, {
         method: 'POST',
         headers: {
@@ -38,17 +37,18 @@ const data = {
         console.error("Error adding tree:", errorData);
         throw new Error("Failed to add tree.");
       }
-
+  
       console.log("Tree added successfully.");
     } catch (error) {
       console.error("Error in addTree:", error);
+      throw error;
     }
   },
 
-  async deleteTree(tree) {
+  async deleteTree(treeId) {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch(`${baseUrl}/trees/${tree.id}`, {
+      const response = await fetch(`${baseUrl}/trees/${treeId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -61,13 +61,39 @@ const data = {
         console.error("Error removing tree:", errorData);
         throw new Error("Failed to remove tree.");
       }
-
+  
       console.log("Tree removed successfully.");
-      return response
+      return response;
     } catch (error) {
       console.error("Error in deleteTree:", error);
+      throw error;
     }
   },
+
+  async updateTree(tree, token) {
+    try {
+      const response = await fetch(`${baseUrl}/trees/${tree.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          height: tree.height,
+          diameter: tree.diameter
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating tree:", errorData);
+        throw new Error("Failed to update tree.");
+      }
+    } catch (error) {
+      console.error("Error in updateTree:", error);
+      throw error;
+    }
+  }
 };
 
 export default data;
