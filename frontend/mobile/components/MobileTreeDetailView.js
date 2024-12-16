@@ -5,12 +5,14 @@ import treeIcon from '../assets/tree-icon.png';
 import infoIcon from '../assets/info.png';
 import * as SecureStore from 'expo-secure-store';
 import data from '../../shared/data';
+import { useNavigation } from '@react-navigation/native';
 
 const MobileTreeDetailView = ({ route }) => {
   const { tree } = route.params;
   const [token, setToken] = useState(null);
   const [height, setHeight] = useState(tree.height ? `${tree.height}` : '0');
   const [diameter, setDiameter] = useState(tree.diameter ? `${tree.diameter}` : '0');
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -24,10 +26,12 @@ const MobileTreeDetailView = ({ route }) => {
   const handleUpdate = async () => {
     const updatedTree = { ...tree, height: parseFloat(height), diameter: parseFloat(diameter) };
     data.updateTree(updatedTree, token);
+    navigation.goBack();
   };
 
   const handleDelete = async () => {
     data.deleteTree(tree.id, token);
+    navigation.goBack();
   };
 
   return (
