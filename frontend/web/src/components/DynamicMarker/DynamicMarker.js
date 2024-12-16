@@ -37,6 +37,7 @@ const DynamicMarker = ({ tree, isSelected, selectedTreeFromList, onTreeSelect })
     return (
         <Marker
             position={[tree.latitude, tree.longitude]}
+            alt={`dynamic-marker-${tree.id}`}
             icon={treeIcon}
             eventHandlers={{
                 click: () => {
