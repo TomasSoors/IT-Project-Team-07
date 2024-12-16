@@ -4,6 +4,7 @@ import './TreeDetail.css';
 
 const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [editableTree, setEditableTree] = useState(null);
 
     const BASE_URL = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
 
@@ -29,6 +30,20 @@ const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
 
         verifyToken();
     }, [BASE_URL]);
+
+    useEffect(() => {
+        if (selectedTree) {
+            setEditableTree({ ...selectedTree });
+        }
+    }, [selectedTree]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditableTree((prevTree) => ({
+            ...prevTree,
+            [name]: name === 'height' ? parseFloat(value) : value, 
+        }));
+    };
 
     return (
         <div className="container">
@@ -62,9 +77,51 @@ const TreeDetail = ({ selectedTree, onClose, onDelete }) => {
                             </div>
                             <div className="details">
                                 <h3>Data:</h3>
-                                <p><strong>Beschrijving:</strong> {selectedTree.description}</p>
-                                <p><strong>Hoogte:</strong> {selectedTree.height} meter</p>
-                                <p><strong>Coördinaten:</strong> {selectedTree.latitude}, {selectedTree.longitude}</p>
+                                {isAuthenticated ? (
+                                    <>
+                                        <p>
+                                            <strong>Beschrijving:</strong>
+                                            <input
+                                                type="text"
+                                                name="description"
+                                                value={editableTree?.description || ''}
+                                                onChange={handleInputChange}
+                                            />
+                                        </p>
+                                        <p>
+                                            <strong>Hoogte:</strong>
+                                            <input
+                                                type="number"
+                                                name="height"
+                                                value={editableTree?.height || ''}
+                                                onChange={handleInputChange}
+                                            />{" "}
+                                            meter
+                                        </p>
+                                        <p>
+                                            <strong>Coördinaten:</strong>
+                                            <input
+                                                type="number"
+                                                name="latitude"
+                                                value={editableTree?.latitude || ''}
+                                                onChange={handleInputChange}
+                                            />{" "}
+                                            ,{" "}
+                                            <input
+                                                type="number"
+                                                name="longitude"
+                                                value={editableTree?.longitude || ''}
+                                                onChange={handleInputChange}
+                                            />
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p><strong>Beschrijving:</strong> {selectedTree.description}</p>
+                                        <p><strong>Hoogte:</strong> {selectedTree.height} meter</p>
+                                        <p><strong>Coördinaten:</strong> {selectedTree.latitude}, {selectedTree.longitude}</p>
+                                    </>
+                                )}
                             </div>
                         </div>
                     ) : (
