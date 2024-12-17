@@ -28,8 +28,7 @@ function UploadView() {
 
   const handleFile = (file) => {
     setErrors([]);
-    console.log(file);
-    
+  
     if (file && file.name.toLowerCase().endsWith('.geojson')) {
       const reader = new FileReader();
       reader.onload = async (event) => {
@@ -56,12 +55,7 @@ function UploadView() {
   
             const { geometry, properties } = feature;
   
-            if (
-              !geometry ||
-              geometry.type !== "Point" ||
-              !Array.isArray(geometry.coordinates) ||
-              geometry.coordinates.length !== 2
-            ) {
+            if (!geometry || geometry.type !== "Point" || !Array.isArray(geometry.coordinates) || geometry.coordinates.length !== 2) {
               treeErrors.push(`Feature ${index}: Ongeldige geometrie. Verwachte type 'Point'.`);
             }
   
@@ -70,7 +64,7 @@ function UploadView() {
               treeErrors.push(`Feature ${index}: Coördinaten zijn ongeldig.`);
             }
   
-            const treeName = properties?.tree_id
+            const treeName = properties?.tree_id;
             if (!treeName) {
               treeErrors.push(`Feature ${index}: 'tree_id' ontbreekt in properties.`);
             }
@@ -80,7 +74,7 @@ function UploadView() {
             } else {
               validTrees.push({
                 name: `Tree ${treeName}`,
-                description: `Tree toegevoegd via GeoJSON feature ${index}`,
+                description: `N.v.t`,
                 latitude,
                 longitude,
               });
@@ -89,7 +83,7 @@ function UploadView() {
   
           setErrors(newErrors);
   
-          if (validTrees.length > 0) {
+          if (newErrors.length === 0 && validTrees.length > 0) {
             try {
               for (const tree of validTrees) {
                 await data.addTree(tree, token);
@@ -98,19 +92,19 @@ function UploadView() {
               navigate('/map');
             } catch (apiError) {
               console.error("Fout bij het toevoegen van bomen:", apiError);
-              setErrors(["Er is een fout opgetreden bij het opslaan van de bomen."]);
+              setErrors(["Er is een fout opgetreden bij het toevoegen van bomen."]);
             }
           }
         } catch (err) {
           console.error("GeoJSON parsing error:", err);
-          setErrors(['Er is een fout opgetreden bij het lezen van het GeoJSON-bestand.']);
+          setErrors(["Fout bij het verwerken van het GeoJSON-bestand."]);
         }
       };
       reader.readAsText(file);
     } else {
       setErrors(['Selecteer een geldig GeoJSON-bestand.']);
     }
-  };
+  };  
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];

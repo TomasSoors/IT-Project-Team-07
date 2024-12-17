@@ -69,7 +69,7 @@ describe('UploadView Component', () => {
       expect(data.addTree).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "Tree Tree A",
-          description: "Tree toegevoegd via GeoJSON feature 0",
+          description: "N.v.t",
           latitude: 5.352692,
           longitude: 50.95306,
         }),
@@ -78,7 +78,7 @@ describe('UploadView Component', () => {
       expect(data.addTree).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "Tree Tree B",
-          description: "Tree toegevoegd via GeoJSON feature 1",
+          description: "N.v.t",
           latitude: 5.3527,
           longitude: 50.9531,
         }),
@@ -305,7 +305,7 @@ describe('UploadView Component', () => {
     fireEvent.change(fileInput, { target: { files: [file] } });
   
     await waitFor(() => {
-      expect(screen.getByText(/Er is een fout opgetreden bij het lezen van het GeoJSON-bestand./i)).toBeInTheDocument();
+      expect(screen.getByText(/Fout bij het verwerken van het GeoJSON-bestand./i)).toBeInTheDocument();
     });
   });
   
@@ -362,7 +362,7 @@ describe('UploadView Component', () => {
     fireEvent.change(fileInput, { target: { files: [file] } });
   
     await waitFor(() => {
-      expect(screen.getByText(/Er is een fout opgetreden bij het opslaan van de bomen./i)).toBeInTheDocument();
+      expect(screen.getByText(/Er is een fout opgetreden bij het toevoegen van bomen./i)).toBeInTheDocument();
     });
   });
   
