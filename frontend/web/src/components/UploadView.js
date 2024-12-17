@@ -151,7 +151,7 @@ function UploadView() {
             alignItems: 'center',
           }}
         >
-          <p>Sleep je JSON-bestand hierheen of</p>
+          <p>Sleep je GeoJSON-bestand hierheen of</p>
           <label style={{ cursor: 'pointer', color: '#007bff' }}>
             <input
               type="file"
