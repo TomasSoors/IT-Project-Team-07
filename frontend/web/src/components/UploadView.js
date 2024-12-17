@@ -7,25 +7,18 @@ function UploadView() {
   const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
 
-  // Tokenverificatie bij component-mount
   useEffect(() => {
     const verifyToken = async () => {
       const token = sessionStorage.getItem("token");
       if (!token) {
         return navigate("/");
       }
+      const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
+      const response = await fetch(`${baseUrl}/verify-token/${token}`, {
+        method: "GET",
+      });
 
-      try {
-        const baseUrl = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
-        const response = await fetch(`${baseUrl}/verify-token/${token}`, {
-          method: "GET",
-        });
-
-        if (!response.ok) {
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Tokenverificatie mislukt: ", error);
+      if (!response.ok) {
         navigate("/");
       }
     };
@@ -33,67 +26,89 @@ function UploadView() {
     verifyToken();
   }, [navigate]);
 
-  // Bestandsvalidatie en verwerking
   const handleFile = (file) => {
     setErrors([]);
-    if (file && file.type === 'application/json') {
+    console.log(file);
+    
+    if (file && file.name.toLowerCase().endsWith('.geojson')) {
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         try {
-          const response = JSON.parse(event.target.result);
-
-          if (Array.isArray(response)) {
-            const newErrors = [];
-            const validTrees = response.filter((tree, index) => {
-              const treeErrors = [];
-
-              if (!tree.name) {
-                treeErrors.push(`Boom met index ${index}: Naam ontbreekt.`);
-              }
-              if (
-                !tree.position ||
-                !Array.isArray(tree.position) ||
-                tree.position.length !== 2 ||
-                typeof tree.position[0] !== 'number' ||
-                typeof tree.position[1] !== 'number'
-              ) {
-                treeErrors.push(`Boom met index ${index}: De positie ontbreekt of is ongeldig..`);
-              }
-              if (!tree.description) {
-                treeErrors.push(`Boom met index ${index}: Beschrijving ontbreekt.`);
-              }
-
-              if (treeErrors.length > 0) {
-                newErrors.push(...treeErrors);
-                return false;
-              }
-              return true;
-            });
-
-            setErrors(newErrors);
-
-            if (validTrees.length > 0) {
-              validTrees.forEach(tree => {
-                const [latitude, longitude] = tree.position;
-                data.addTree({
-                  name: tree.name,
-                  description: tree.description || 'Geen beschrijving opgegeven',
-                  latitude,
-                  longitude,
-                });
+          const geojson = JSON.parse(event.target.result);
+          const token = sessionStorage.getItem("token");
+  
+          if (!token) {
+            setErrors(["Authenticatie vereist. Log opnieuw in."]);
+            navigate("/");
+            return;
+          }
+  
+          if (geojson.type !== "FeatureCollection" || !Array.isArray(geojson.features)) {
+            setErrors(["Ongeldig GeoJSON-bestand. Verwachte 'FeatureCollection'."]);
+            return;
+          }
+  
+          const newErrors = [];
+          const validTrees = [];
+  
+          geojson.features.forEach((feature, index) => {
+            const treeErrors = [];
+  
+            const { geometry, properties } = feature;
+  
+            if (
+              !geometry ||
+              geometry.type !== "Point" ||
+              !Array.isArray(geometry.coordinates) ||
+              geometry.coordinates.length !== 2
+            ) {
+              treeErrors.push(`Feature ${index}: Ongeldige geometrie. Verwachte type 'Point'.`);
+            }
+  
+            const [latitude, longitude] = geometry.coordinates;
+            if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+              treeErrors.push(`Feature ${index}: Coördinaten zijn ongeldig.`);
+            }
+  
+            const treeName = properties?.tree_id
+            if (!treeName) {
+              treeErrors.push(`Feature ${index}: 'tree_id' ontbreekt in properties.`);
+            }
+  
+            if (treeErrors.length > 0) {
+              newErrors.push(...treeErrors);
+            } else {
+              validTrees.push({
+                name: `Tree ${treeName}`,
+                description: `Tree toegevoegd via GeoJSON feature ${index}`,
+                latitude,
+                longitude,
               });
+            }
+          });
+  
+          setErrors(newErrors);
+  
+          if (validTrees.length > 0) {
+            try {
+              for (const tree of validTrees) {
+                await data.addTree(tree, token);
+              }
+              console.log("Alle bomen succesvol toegevoegd vanuit GeoJSON.");
               navigate('/map');
-            } else if (newErrors.length === 0) {
-              setErrors(['Het JSON-bestand bevat geen geldige bomen.']);
+            } catch (apiError) {
+              console.error("Fout bij het toevoegen van bomen:", apiError);
+              setErrors(["Er is een fout opgetreden bij het opslaan van de bomen."]);
             }
           }
         } catch (err) {
-          setErrors(['Er is een fout opgetreden bij het lezen van het JSON-bestand.']);
+          console.error("GeoJSON parsing error:", err);
+          setErrors(['Er is een fout opgetreden bij het lezen van het GeoJSON-bestand.']);
         }
       };
       reader.readAsText(file);
     } else {
-      setErrors(['Selecteer een geldig JSON-bestand.']);
+      setErrors(['Selecteer een geldig GeoJSON-bestand.']);
     }
   };
 
@@ -146,7 +161,7 @@ function UploadView() {
           <label style={{ cursor: 'pointer', color: '#007bff' }}>
             <input
               type="file"
-              accept=".json"
+              accept=".geojson"
               onChange={handleFileSelect}
               style={{ display: 'none' }}
             />
