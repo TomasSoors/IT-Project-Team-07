@@ -19,12 +19,11 @@ def create_tree(tree: Tree, db: Session):
         )
         .first()
     )
-    if db_tree:
-        raise HTTPException(status_code=404, detail="Tree already exists!")
-    db_tree = Tree(**tree.dict())
-    db.add(db_tree)
-    db.commit()
-    db.refresh(db_tree)
+    if not db_tree:
+        db_tree = Tree(**tree.dict())
+        db.add(db_tree)
+        db.commit()
+        db.refresh(db_tree)
     return db_tree
 
 def get_all_trees(db: Session):
