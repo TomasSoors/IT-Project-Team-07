@@ -44,17 +44,19 @@ const data = {
     }
   },
 
-  async deleteTree(tree, token) {
+  async deleteTree(treeId, token) {
     try {
-      const response = await fetch(`${baseUrl}/trees/${tree.id}`, {
+      const response = await fetch(`${baseUrl}/trees/${treeId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) {
+      if (response.ok){
+        return response;
+      }
+      else if (!response.ok) {
         const errorData = await response.json();
         console.error("Error removing tree:", errorData);
         throw new Error("Failed to remove tree.");
@@ -80,8 +82,10 @@ const data = {
           diameter: tree.diameter
         }),
       });
-
-      if (!response.ok) {
+      if (response.ok){
+        return response;
+      }
+      else if (!response.ok) {
         const errorData = await response.json();
         console.error("Error updating tree:", errorData);
         throw new Error("Failed to update tree.");

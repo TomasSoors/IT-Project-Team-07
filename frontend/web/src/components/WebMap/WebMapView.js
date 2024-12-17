@@ -209,8 +209,15 @@ const MapView = ({ fetchTrees }) => {
     };
 
     const handleDeleteTree = async () => {
+        const token = sessionStorage.getItem('token');
+        
+        if (!token) {
+            console.error("No authentication token found.");
+            return;
+        }
+
         if (selectedTree) {
-            const response = await data.deleteTree(selectedTree)
+            const response = await data.deleteTree(selectedTree.id, token)
             if (response.ok) {
                 Store.addNotification({
                     title: "Succesvol verwijderd!",
@@ -230,6 +237,55 @@ const MapView = ({ fetchTrees }) => {
             }
         }
     };
+
+    const handleUpdateTree = async (updatedTree) => {      
+        const token = sessionStorage.getItem('token');
+        
+        if (!token) {
+            console.error("No authentication token found.");
+            return;
+        }
+    
+        try {
+            const response = await data.updateTree(updatedTree, token);
+            console.log(response);
+            
+            if (response.ok) {
+                Store.addNotification({
+                    title: "Succesvol geüpdatet!",
+                    message: `Boom met ID: ${updatedTree.id} is succesvol geüpdatet.`,
+                    type: "success",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animate__animated", "animate__bounceIn"],
+                    animationOut: ["animate__animated", "animate__zoomOut"],
+                    dismiss: {
+                        duration: 3000,
+                        onScreen: true
+                    }
+                });
+                fetchTreesData(); 
+            } else {
+                const errorData = await response.json();
+                console.error("Error updating tree:", errorData);
+                Store.addNotification({
+                    title: "Update mislukt",
+                    message: `Kon boom met ID: ${updatedTree.id} niet updaten.`,
+                    type: "danger",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animate__animated", "animate__shakeX"],
+                    animationOut: ["animate__animated", "animate__fadeOut"],
+                    dismiss: {
+                        duration: 3000,
+                        onScreen: true
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error in handleUpdateTree:", error);
+        }
+    };    
 
     return (
         <div className="layout">
@@ -267,7 +323,7 @@ const MapView = ({ fetchTrees }) => {
                     </MapContainer>
 
                 </div>
-                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} id="tree-detail" />}
+                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} onUpdate={handleUpdateTree} id="tree-detail" />}
                 {clickPosition && (
                     <TreeList
                         treeList={treesInCircle}
