@@ -5,6 +5,7 @@ import MapView from './WebMapView';
 import { MemoryRouter } from 'react-router-dom';
 import { MapContainer as OriginalMapContainer, TileLayer as OriginalTileLayer } from 'react-leaflet';
 import data from '../../../../shared/data';
+import TreeDetail from "../TreeDetail/TreeDetail";
 
 
 const mockTrees = [
@@ -13,6 +14,7 @@ const mockTrees = [
         name: 'Tree A',
         latitude: 50.95306,
         longitude: 5.352692,
+        height: 20,
         description: 'Sample description A',
     },
     {
@@ -20,6 +22,7 @@ const mockTrees = [
         name: 'Tree B',
         latitude: 50.95310,
         longitude: 5.352700,
+        height: 20,
         description: 'Sample description B',
     },
 ];
@@ -33,12 +36,15 @@ const TileLayer = (props) => (
 );
 jest.mock('../../../../shared/data', () => ({
     getTrees: jest.fn(),
+    deleteTree: jest.fn(),
 }));
 
 describe('MapView Component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         data.getTrees.mockResolvedValue(mockTrees);
+        sessionStorage.setItem('token', 'mock-token');
+        fetch.resetMocks();
     });
 
     test('renders the map container and controls', async () => {
@@ -66,7 +72,7 @@ describe('MapView Component', () => {
             // expect(markers).toHaveLength(2);
         });
 
-        
+
     });
 
     test('shows tree details when a marker is clicked', async () => {
@@ -105,4 +111,30 @@ describe('MapView Component', () => {
             expect(treeTitle).not.toBeInTheDocument();
         });
     });
+    test("removes tree and shows success notification on delete", async () => {
+        const mockDeleteTree = jest.fn(() => Promise.resolve({ ok: true }));
+        data.deleteTree.mockImplementation(mockDeleteTree);
+
+        render(
+            <MemoryRouter>
+                <MapView fetchTrees={mockFetchTrees} />
+            </MemoryRouter>
+        );
+
+        const markers = await screen.findAllByRole("button", { name: /Marker/i });
+        fireEvent.click(markers[0]);
+
+        const treeTitle = await screen.findByText(`Boom #${mockTrees[0].id}`);
+        expect(treeTitle).toBeInTheDocument();
+
+        const deleteButton = screen.getByAltText("Delete");
+        fireEvent.click(deleteButton);
+
+        await waitFor(() => {
+            expect(mockDeleteTree).toHaveBeenCalledWith(mockTrees[0].id);
+        });
+        const notification = await screen.findByText(/Succesvol verwijderd!/i);
+        expect(notification).toBeInTheDocument();
+    });
+
 });

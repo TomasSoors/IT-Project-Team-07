@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, View, Alert, Image, Text } from 'react-native';
 import MapView, { Marker, Callout, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
 import data from '../../shared/data';
 import treeIcon from '../assets/tree-icon.png';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import infoIcon from '../assets/info.png';
 import PropTypes from 'prop-types';
 
@@ -18,6 +18,17 @@ const MobileMapView = ({ radius }) => {
     longitudeDelta: 0.2,
   });
   const navigation = useNavigation();
+
+  const fetchTrees = async () => {
+    const fetchedTrees = await data.getTrees();
+    setTrees(fetchedTrees);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTrees();
+    }, [])
+  );
 
   useEffect(() => {
     (async () => {
@@ -39,10 +50,6 @@ const MobileMapView = ({ radius }) => {
       }
     })();
 
-    const fetchTrees = async () => {
-      const fetchedTrees = await data.getTrees();
-      setTrees(fetchedTrees);
-    };
     fetchTrees();
   }, []);
 
@@ -77,7 +84,7 @@ const MobileMapView = ({ radius }) => {
               source={treeIcon}
               style={styles.marker}
             />
-            <Callout testID={`callout=${tree.id}`} onPress={() => navigation.navigate('TreeDetails', { tree })}>
+            <Callout testID={`callout-${tree.id}`} onPress={() => navigation.navigate('TreeDetails', { tree })}>
               <View style={styles.callout}>
                 <Text style={styles.infoText}>
                   <Image source={infoIcon} style={styles.infoImage}/>
@@ -142,6 +149,6 @@ const styles = StyleSheet.create({
   }
 });
 
-MobileMapView.propTypes = { radius: PropTypes.number, };
+MobileMapView.propTypes = { radius: PropTypes.number };
 
 export default MobileMapView;

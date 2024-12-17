@@ -38,19 +38,19 @@ describe('UploadView Component', () => {
         description: 'Sample description B',
       },
     ];
-  
+
     const file = new Blob([JSON.stringify(mockJSON)], { type: 'application/json' });
     const mockFile = new File([file], 'trees.json', { type: 'application/json' });
-  
+
     render(
       <BrowserRouter>
         <UploadView />
       </BrowserRouter>
     );
-  
+
     const fileInput = screen.getByLabelText(/klik om een bestand te selecteren/i);
     fireEvent.change(fileInput, { target: { files: [mockFile] } });
-  
+
     await waitFor(() => {
       expect(data.addTree).toHaveBeenCalledTimes(2);
       expect(data.addTree).toHaveBeenCalledWith({
@@ -61,7 +61,7 @@ describe('UploadView Component', () => {
       });
     });
   });
-  
+
 
   test('shows error for invalid file type', async () => {
     const invalidFile = new File(['Not a JSON'], 'invalid.txt', { type: 'text/plain' });

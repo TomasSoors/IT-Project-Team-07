@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import React, { useState, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, useMap, Circle, useMapEvents } from 'react-leaflet';
 import data from '../../../../shared/data';
 import 'leaflet/dist/leaflet.css';
 import Navbar from '../Navbar/Navbar';
@@ -9,24 +8,25 @@ import L from 'leaflet';
 import PropTypes from 'prop-types';
 import DynamicMarker from '../DynamicMarker/DynamicMarker';
 import TreeDetail from '../TreeDetail/TreeDetail';
+import TreeList from '../TreeList/TreeList';
+import { ReactNotifications, Store } from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
+import 'animate.css/animate.min.css';
 
 const layers = [
     {
         name: 'Standaard',
-        url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-        attribution: '&copy; OpenStreetMap contributors, Humanitarian OpenStreetMap Team',
+        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         preview: 'https://tile.openstreetmap.org/12/2048/1360.png',
     },
     {
         name: 'Satelliet',
         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attribution: '&copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community',
         preview: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/12/1360/2048',
     },
     {
         name: 'Fietsen',
         url: 'https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=effe903119e1476883987eec6dfc2a5b',
-        attribution: '&copy; OpenCycleMap contributors',
         preview: 'https://tile.thunderforest.com/cycle/12/2048/1360.png?apikey=effe903119e1476883987eec6dfc2a5b',
     },
 ];
@@ -136,64 +136,158 @@ LayerControl.propTypes = {
     setActiveLayer: PropTypes.func.isRequired,
 };
 
+const MapEvents = ({ onClick }) => {
+    useMapEvents({
+        click: (e) => {
+            onClick(e);
+        },
+    });
+    return null;
+};
+
+
 const MapView = ({ fetchTrees }) => {
     const [trees, setTrees] = useState([]);
     const [activeLayer, setActiveLayer] = useState(layers[0]);
     const [center] = useState([50.95306, 5.352692]);
     const [zoom] = useState(16);
     const [selectedTree, setSelectedTree] = useState(null);
+    const [clickPosition, setClickPosition] = useState(null);
+    const [treesInCircle, setTreesInCircle] = useState([]);
+    const [radius, setRadius] = useState(100);
+    const [selectedTreeFromList, setSelectedTreeFromList] = useState(null);
+    const mapRef = useRef();
 
 
+    const fetchTreesData = async () => {
+        const fetchedTrees = await data.getTrees();
+        setTrees(fetchedTrees);
+    };
     useEffect(() => {
-        const fetchTrees = async () => {
-            const fetchedTrees = await data.getTrees();
-            setTrees(fetchedTrees);
-        };
-
-        fetchTrees();
+        fetchTreesData();
     }, [fetchTrees]);
+
 
     const handleTreeSelect = (tree) => {
         setSelectedTree(tree);
+        setTreesInCircle([]);
+        setClickPosition(null);
+        setSelectedTreeFromList(null);
+    };
+
+    const handleTreeListSelect = (tree) => {
+        setSelectedTreeFromList(tree);
     };
 
     const handleCloseDetail = () => {
         setSelectedTree(null);
+        setTreesInCircle([]);
+        setClickPosition(null);
+    };
+
+    const handleMapClick = (e) => {
+        const clickedPoint = e.latlng;
+        setClickPosition(clickedPoint);
+        setSelectedTree(null);
+
+        const treesWithin = trees.filter(tree => {
+            const treeLatLng = L.latLng(tree.latitude, tree.longitude);
+            return clickedPoint.distanceTo(treeLatLng) <= radius;
+        });
+
+        setTreesInCircle(treesWithin);
+        if (treesWithin.length > 0) {
+            setSelectedTree(null);
+        }
+    };
+
+    const handleRadiusChange = (event, newValue) => {
+        setRadius(newValue);
+        if (clickPosition) {
+            handleMapClick({ latlng: clickPosition });
+        }
+    };
+
+    const handleDeleteTree = async () => {
+        if (selectedTree) {
+            const response = await data.deleteTree(selectedTree.id)
+            if (response.ok) {
+                Store.addNotification({
+                    title: "Succesvol verwijderd!",
+                    message: `Boom met ID: ${selectedTree.id} is succesvol verwijderd`,
+                    type: "success",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animate__animated", "animate__bounceIn"],
+                    animationOut: ["animate__animated", "animate__zoomOut"],
+                    dismiss: {
+                        duration: 3000,
+                        onScreen: true
+                    }
+                });
+                handleCloseDetail()
+                fetchTreesData();
+            }
+        }
     };
 
     return (
         <div className="layout">
+            <ReactNotifications/>
             <Navbar />
-            <div className={`map-container ${selectedTree ? 'map-container-selected' : ''}`}>
+            <div className={`map-container ${selectedTree || clickPosition ? 'map-container-selected' : ''}`}>
                 <div className="map-area">
                     <MapContainer
                         center={center}
                         zoom={zoom}
                         className="leaflet-map"
                         id="map-container"
+                        ref={mapRef}
                     >
                         <LayerControl activeLayer={activeLayer} setActiveLayer={setActiveLayer} />
-                        <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" id="tile-layer" />
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" id="tile-layer" />
+                        <MapEvents onClick={handleMapClick} />
                         {trees.length > 0 && trees.map((tree) => (
                             <DynamicMarker
                                 key={tree.id}
                                 tree={tree}
                                 isSelected={selectedTree?.id === tree.id}
+                                selectedTreeFromList={selectedTreeFromList}
                                 onTreeSelect={handleTreeSelect}
                                 id={`dynamic-marker-${tree.id}`}
                             />
                         ))}
+                        {clickPosition && (
+                            <Circle
+                                center={clickPosition}
+                                radius={radius}
+                                pathOptions={{ fillColor: '#0597ff', fillOpacity: 0.1, color: '#0597ff' }}
+                            />
+                        )}
                     </MapContainer>
-                                    
+
                 </div>
-                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} id="tree-detail" />}
+                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} id="tree-detail" />}
+                {clickPosition && (
+                    <TreeList
+                        treeList={treesInCircle}
+                        onClose={handleCloseDetail}
+                        radius={radius}
+                        onRadiusChange={handleRadiusChange}
+                        selectedTreeFromList={selectedTreeFromList}
+                        onTreeListSelect={handleTreeListSelect}
+                        onTreeDetailSelect={handleTreeSelect}
+                    />
+                )}
             </div>
         </div>
     );
 };
-
 MapView.propTypes = {
-    fetchTrees: PropTypes.func.isRequired, 
+    fetchTrees: PropTypes.func.isRequired
+};
+MapEvents.propTypes = {
+    onClick: PropTypes.func.isRequired,
 };
 
 export default MapView;

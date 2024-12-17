@@ -15,15 +15,18 @@ jest.mock('expo-location', () => ({
 // Mock useNavigation
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
+  useFocusEffect: jest.fn((cb) => cb()),  // Mock useFocusEffect to immediately invoke the callback
 }));
 
 jest.mock('../../shared/data', () => ({
   getTrees: jest.fn(),
 }));
+
 const mockTrees = [
   { id: 1, name: 'Tree 1', latitude: 50.8503, longitude: 4.3517 },
   { id: 2, name: 'Tree 2', latitude: 50.851, longitude: 4.352 },
 ];
+
 // Mock data for user location
 const mockLocation = {
   coords: {
@@ -32,7 +35,6 @@ const mockLocation = {
   },
 };
 
-let trees = []
 // Mock navigation.navigate
 const mockNavigate = jest.fn();
 useNavigation.mockReturnValue({
@@ -148,7 +150,7 @@ describe('MobileMapView', () => {
     await act(async () => {
       await waitFor(() => {
         const treeId = mockTrees[0].id;
-        const callout = getByTestId(`callout=${treeId}`);
+        const callout = getByTestId(`callout-${treeId}`);
         fireEvent.press(callout);
         expect(mockNavigate).toHaveBeenCalledWith('TreeDetails', { tree: mockTrees[0] });
       });

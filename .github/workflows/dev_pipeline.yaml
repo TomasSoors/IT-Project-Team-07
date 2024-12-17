@@ -99,7 +99,6 @@ jobs:
           cd frontend/shared
           npm run test -- --coverage
 
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:

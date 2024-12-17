@@ -1,6 +1,30 @@
-const sharedData = [
-    { id: 1, latitude: 50.95306, longitude: 5.352692, title: 'Tree 1', description: "this is tree 1" },
-    { id: 2, latitude: 50.95406, longitude: 5.352592, title: 'Tree 2', description: "this is tree 2" },
-  ];
+const baseUrl = process.env.REACT_APP_EXTERNAL_IP || "https://mutualism-backend-359585659782.europe-west1.run.app";
 
-export default sharedData
+const login = {
+  async login(username, password) {
+    try {
+      const formDetails = new URLSearchParams();
+      formDetails.append('username', username);
+      formDetails.append('password', password);
+
+      const response = await fetch(`${baseUrl}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formDetails.toString(),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.data.access_token;
+      } else {
+        throw new Error("Failed to login.");
+      }
+    } catch (error) {
+      console.error("Error in login:", error);
+    }
+  }
+};
+
+export default login;
