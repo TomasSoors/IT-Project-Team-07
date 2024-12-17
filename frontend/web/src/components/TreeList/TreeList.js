@@ -49,10 +49,9 @@ const TreeList = ({ treeList, onClose, radius, onRadiusChange, selectedTreeFromL
                         {treeList.map(tree => (
                             <div
                                 key={tree.id}
-                                className={`tree-object ${selectedTree === tree.id ? 'selected' : ''}`}
                             >
                                 <button
-                                    className="tree-item-button"
+                                    className={`tree-object ${selectedTree === tree.id ? 'selected' : ''}`}
                                     aria-pressed={selectedTree === tree.id}
                                     onClick={() => handleTreeClick(tree)}
                                     onKeyDown={(event) => handleKeyDown(event, tree)}
