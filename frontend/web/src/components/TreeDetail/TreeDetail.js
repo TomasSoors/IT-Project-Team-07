@@ -39,10 +39,6 @@ const TreeDetail = ({ selectedTree, onClose, onDelete, onUpdate, isAuthenticated
 
     const handleSave = () => {
         if (editableTree) {
-            console.log(selectedTree);
-
-            console.log(editableTree);
-
             onUpdate(editableTree);
             setIsModified(false);
         }
