@@ -11,8 +11,6 @@ const TreeDetail = ({ selectedTree, onClose, onDelete, onUpdate, isAuthenticated
     const [isModified, setIsModified] = useState(false);
     const [open, setOpen] = React.useState(false);
 
-    const BASE_URL = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
-
     const handleClickOpen = () => {
         setOpen(true);
     };
