@@ -310,6 +310,7 @@ describe('UploadView Component', () => {
   });
   
   test('adds valid trees and redirects to map', async () => {
+    const mockSetRefresh = jest.fn();
     const mockGeoJSON = {
       type: "FeatureCollection",
       features: [
@@ -324,7 +325,7 @@ describe('UploadView Component', () => {
   
     render(
       <BrowserRouter>
-        <UploadView />
+        <UploadView setRefresh={mockSetRefresh} />
       </BrowserRouter>
     );
   

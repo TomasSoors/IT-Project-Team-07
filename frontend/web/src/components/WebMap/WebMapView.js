@@ -146,7 +146,7 @@ const MapEvents = ({ onClick }) => {
 };
 
 
-const MapView = ({ fetchTrees }) => {
+const MapView = ({ fetchTrees, refresh }) => {
     const [trees, setTrees] = useState([]);
     const [activeLayer, setActiveLayer] = useState(layers[0]);
     const [center] = useState([50.95306, 5.352692]);
@@ -164,8 +164,8 @@ const MapView = ({ fetchTrees }) => {
         setTrees(fetchedTrees);
     };
     useEffect(() => {
-        fetchTreesData();
-    }, [fetchTrees]);
+        fetchTreesData();        
+    }, [fetchTrees, refresh]);
 
 
     const handleTreeSelect = (tree) => {
@@ -284,7 +284,8 @@ const MapView = ({ fetchTrees }) => {
     );
 };
 MapView.propTypes = {
-    fetchTrees: PropTypes.func.isRequired
+    fetchTrees: PropTypes.func.isRequired,
+    refresh: PropTypes.func.isRequired
 };
 MapEvents.propTypes = {
     onClick: PropTypes.func.isRequired,
