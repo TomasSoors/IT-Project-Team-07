@@ -19,7 +19,6 @@ const login = {
         const data = await response.json();
         return data.data.access_token;
       } else {
-        const errorData = await response.json();
         throw new Error("Failed to login.");
       }
     } catch (error) {

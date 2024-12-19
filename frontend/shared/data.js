@@ -1,4 +1,4 @@
-const baseUrl = process.env.REACT_APP_EXTERNAL_IP || "https://mutualism-backend-359585659782.europe-west1.run.app";
+const baseUrl = process.env.REACT_APP_EXTERNAL_IP || "https://mutualism-backend-359585659782.europe-west1.run.app/";
 
 const data = {
   // Ophalen van alle bomen
@@ -37,15 +37,17 @@ const data = {
         console.error("Error adding tree:", errorData);
         throw new Error("Failed to add tree.");
       }
-
+  
       console.log("Tree added successfully.");
     } catch (error) {
       console.error("Error in addTree:", error);
+      throw error;
     }
   },
 
   async deleteTree(treeId, token) {
     try {
+
       const response = await fetch(`${baseUrl}/trees/${treeId}`, {
         method: 'DELETE',
         headers: {
@@ -61,11 +63,12 @@ const data = {
         console.error("Error removing tree:", errorData);
         throw new Error("Failed to remove tree.");
       }
-
+  
       console.log("Tree removed successfully.");
-      return response
+      return response;
     } catch (error) {
       console.error("Error in deleteTree:", error);
+      throw error;
     }
   },
 
@@ -92,6 +95,7 @@ const data = {
       }
     } catch (error) {
       console.error("Error in updateTree:", error);
+      throw error;
     }
   }
 };

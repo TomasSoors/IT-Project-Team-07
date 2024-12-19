@@ -1,10 +1,8 @@
 .container {
-    /* Voeg deze regel toe als je container nog geen vaste hoogte heeft */
-    height: 85vh; /* of een andere geschikte hoogte */
+    height: 85vh; 
 }
 
 .card {
-    /* Zorg ervoor dat de card de volledige hoogte van de container gebruikt */
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -14,15 +12,15 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Voorkomt dat de inhoud buiten de content div komt */
+    overflow: hidden; 
     position: relative;
     padding: 75px 20px 20px 20px;
 }
 
 .tree-list-scroll {
     flex-grow: 1;
-    overflow-y: auto; /* Maakt deze div verticaal scrollbaar */
-    padding-right: 10px; /* Ruimte voor de scrollbar */
+    overflow-y: auto; 
+    padding-right: 10px; 
 }
 
 .tree-object {
@@ -35,7 +33,7 @@
     font-weight: bold;
     color: #AE9A64;
     box-shadow: 0px 0px 10px rgb(122, 122, 122);
-    
+    border: none;
 }
 
 .total-info {
@@ -45,7 +43,11 @@
 
 .tree-object {
     cursor: pointer;
-    transition: border-color 0.3s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease; 
+}
+
+.tree-object:hover {
+    transform: scale(1.03); 
 }
 
 .tree-object.selected {

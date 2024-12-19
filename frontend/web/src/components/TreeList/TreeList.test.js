@@ -38,14 +38,14 @@ describe('TreeList Component', () => {
     setup();
 
     expect(screen.getByText(/Bomen in radius: 3/)).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getAllByRole('button')[0]).toBeInTheDocument();
     expect(screen.getAllByAltText('boom')).toHaveLength(3);
   });
 
   test('calls onClose when close button is clicked', () => {
     setup();
 
-    const closeButton = screen.getByRole('button');
+    const closeButton = screen.getByAltText('Close');
     fireEvent.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);

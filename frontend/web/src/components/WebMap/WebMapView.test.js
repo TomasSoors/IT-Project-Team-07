@@ -111,4 +111,5 @@ describe('MapView Component', () => {
             expect(treeTitle).not.toBeInTheDocument();
         });
     });
+
 });

@@ -17,7 +17,7 @@ const DynamicMarker = ({ tree, isSelected, selectedTreeFromList, onTreeSelect })
     const map = useMap();
     const [iconSize, setIconSize] = useState(getIconSize(map.getZoom()));
 
-    const isSelectedFromList = selectedTreeFromList === tree.id; // Controleer of boom geselecteerd is vanuit lijst
+    const isSelectedFromList = selectedTreeFromList === tree.id;
 
     const treeIcon = L.icon({
         iconUrl: isSelected || isSelectedFromList ? selectedTreeLogo : treeLogo,
@@ -42,7 +42,7 @@ const DynamicMarker = ({ tree, isSelected, selectedTreeFromList, onTreeSelect })
             eventHandlers={{
                 click: () => {
                     map.flyTo([tree.latitude, tree.longitude], 16, { duration: 0.5 });
-                    onTreeSelect(tree); // Meld selectie aan oudercomponent
+                    onTreeSelect(tree);
                 },
             }}
         />

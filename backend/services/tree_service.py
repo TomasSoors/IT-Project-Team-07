@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from database import SessionLocal
 
 
+
 def create_tree(tree: Tree, db: Session):
     radius = 0.0001
     db_tree = (
@@ -18,12 +19,11 @@ def create_tree(tree: Tree, db: Session):
         )
         .first()
     )
-    if db_tree:
-        raise HTTPException(status_code=404, detail="Tree already exists!")
-    db_tree = Tree(**tree.dict())
-    db.add(db_tree)
-    db.commit()
-    db.refresh(db_tree)
+    if not db_tree:
+        db_tree = Tree(**tree.dict())
+        db.add(db_tree)
+        db.commit()
+        db.refresh(db_tree)
     return db_tree
 
 def get_all_trees(db: Session):
@@ -45,4 +45,4 @@ def update_tree(tree_id: int, height: int, diameter: int, db: Session):
     db_tree.diameter = diameter
     db.commit()
     db.refresh(db_tree)
-    return {"message": "Tree updated successfully"}
+    return db_tree
