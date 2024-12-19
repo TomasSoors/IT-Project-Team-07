@@ -6,37 +6,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { DialogActions } from '@mui/material';
 import Button from '@mui/material/Button';
 
-const TreeDetail = ({ selectedTree, onClose, onDelete, onUpdate }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+const TreeDetail = ({ selectedTree, onClose, onDelete, onUpdate, isAuthenticated }) => {
     const [editableTree, setEditableTree] = useState(null);
     const [isModified, setIsModified] = useState(false);
     const [open, setOpen] = React.useState(false);
 
-
     const BASE_URL = process.env.REACT_APP_EXTERNAL_IP || 'http://localhost:8000';
-
-    useEffect(() => {        
-        const verifyToken = async () => {
-            const token = sessionStorage.getItem('token');
-            if (!token) return;
-            try {
-                const response = await fetch(`${BASE_URL}/verify-token/${token}`, {
-                    method: 'GET',
-                });
-
-                if (response.ok) {
-                    setIsAuthenticated(true);
-                } else {
-                    setIsAuthenticated(false);
-                }
-            } catch (error) {
-                console.error("Error verifying token:", error);
-                setIsAuthenticated(false);
-            }
-        };
-
-        verifyToken();
-    }, [BASE_URL]);
 
     const handleClickOpen = () => {
         setOpen(true);

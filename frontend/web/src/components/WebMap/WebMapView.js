@@ -156,11 +156,13 @@ const MapView = ({ fetchTrees }) => {
     const [treesInCircle, setTreesInCircle] = useState([]);
     const [radius, setRadius] = useState(100);
     const [selectedTreeFromList, setSelectedTreeFromList] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const mapRef = useRef();
 
 
     const fetchTreesData = async () => {
         const fetchedTrees = await data.getTrees();
+        if (sessionStorage.getItem("token")) {setIsAuthenticated(true)};
         setTrees(fetchedTrees);
     };
     useEffect(() => {
@@ -323,7 +325,7 @@ const MapView = ({ fetchTrees }) => {
                     </MapContainer>
 
                 </div>
-                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} onUpdate={handleUpdateTree} id="tree-detail" />}
+                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} onUpdate={handleUpdateTree} isAuthenticated={isAuthenticated} id="tree-detail" />}
                 {clickPosition && (
                     <TreeList
                         treeList={treesInCircle}
