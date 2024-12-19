@@ -21,7 +21,7 @@ describe('UploadView Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText(/Sleep je JSON-bestand hierheen/i)).toBeInTheDocument();
+    expect(screen.getByText(/Sleep je GeoJSON-bestand hierheen of/i)).toBeInTheDocument();
     expect(screen.getByText(/klik om een bestand te selecteren/i)).toBeInTheDocument();
   });
 
