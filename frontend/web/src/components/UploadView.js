@@ -89,7 +89,8 @@ function UploadView() {
                 await data.addTree(tree, token);
               }
               console.log("Alle bomen succesvol toegevoegd vanuit GeoJSON.");
-              navigate('/map');
+              navigate('/map', { state: { refresh: true } });
+              window.location.reload()
             } catch (apiError) {
               console.error("Fout bij het toevoegen van bomen:", apiError);
               setErrors(["Er is een fout opgetreden bij het toevoegen van bomen."]);
