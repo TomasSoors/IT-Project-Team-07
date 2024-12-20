@@ -21,7 +21,7 @@ describe('UploadView Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText(/Sleep je JSON-bestand hierheen/i)).toBeInTheDocument();
+    expect(screen.getByText(/Sleep je GeoJSON-bestand hierheen of/i)).toBeInTheDocument();
     expect(screen.getByText(/klik om een bestand te selecteren/i)).toBeInTheDocument();
   });
 
@@ -310,6 +310,7 @@ describe('UploadView Component', () => {
   });
   
   test('adds valid trees and redirects to map', async () => {
+    const mockSetRefresh = jest.fn();
     const mockGeoJSON = {
       type: "FeatureCollection",
       features: [
@@ -324,7 +325,7 @@ describe('UploadView Component', () => {
   
     render(
       <BrowserRouter>
-        <UploadView />
+        <UploadView setRefresh={mockSetRefresh} />
       </BrowserRouter>
     );
   

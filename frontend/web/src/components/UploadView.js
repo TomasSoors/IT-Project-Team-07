@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import data from '../../../shared/data';
+import PropTypes from 'prop-types';
 import Navbar from './Navbar/Navbar';
 
-function UploadView() {
+function UploadView({ setRefresh }) {
   const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
 
@@ -89,7 +90,8 @@ function UploadView() {
                 await data.addTree(tree, token);
               }
               console.log("Alle bomen succesvol toegevoegd vanuit GeoJSON.");
-              navigate('/map');
+              setRefresh(true); // Ververs de data in WebMap
+              navigate('/map', { state: { refresh: true } });
             } catch (apiError) {
               console.error("Fout bij het toevoegen van bomen:", apiError);
               setErrors(["Er is een fout opgetreden bij het toevoegen van bomen."]);
@@ -175,4 +177,7 @@ function UploadView() {
   );
 }
 
+UploadView.propTypes = {
+  setRefresh: PropTypes.func.isRequired
+};
 export default UploadView;

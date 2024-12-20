@@ -12,7 +12,6 @@ import TreeList from '../TreeList/TreeList';
 import { ReactNotifications, Store } from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
 import 'animate.css/animate.min.css';
-
 const layers = [
     {
         name: 'Standaard',
@@ -88,7 +87,7 @@ const LayerControl = ({ activeLayer, setActiveLayer }) => {
                 >
                     {layers.map((layer) => (
                         <div
-                            key={layer.name}  // Use unique `name` as key
+                            key={layer.name}
                             style={{
                                 display: 'inline-block',
                                 margin: '5px',
@@ -146,7 +145,7 @@ const MapEvents = ({ onClick }) => {
 };
 
 
-const MapView = ({ fetchTrees }) => {
+const MapView = ({ fetchTrees, refresh }) => {
     const [trees, setTrees] = useState([]);
     const [activeLayer, setActiveLayer] = useState(layers[0]);
     const [center] = useState([50.95306, 5.352692]);
@@ -156,16 +155,18 @@ const MapView = ({ fetchTrees }) => {
     const [treesInCircle, setTreesInCircle] = useState([]);
     const [radius, setRadius] = useState(100);
     const [selectedTreeFromList, setSelectedTreeFromList] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const mapRef = useRef();
 
 
     const fetchTreesData = async () => {
         const fetchedTrees = await data.getTrees();
+        if (sessionStorage.getItem("token")) { setIsAuthenticated(true) };
         setTrees(fetchedTrees);
     };
     useEffect(() => {
         fetchTreesData();
-    }, [fetchTrees]);
+    }, [fetchTrees, refresh]);
 
 
     const handleTreeSelect = (tree) => {
@@ -209,8 +210,16 @@ const MapView = ({ fetchTrees }) => {
     };
 
     const handleDeleteTree = async () => {
+        const token = sessionStorage.getItem('token');
+
+        if (!token) {
+            console.error("No authentication token found.");
+            return;
+        }
+
         if (selectedTree) {
-            const response = await data.deleteTree(selectedTree.id)
+            const response = await data.deleteTree(selectedTree.id, token)
+
             if (response.ok) {
                 Store.addNotification({
                     title: "Succesvol verwijderd!",
@@ -231,9 +240,58 @@ const MapView = ({ fetchTrees }) => {
         }
     };
 
+    const handleUpdateTree = async (updatedTree) => {
+        const token = sessionStorage.getItem('token');
+
+        if (!token) {
+            console.error("No authentication token found.");
+            return;
+        }
+
+        try {
+            const response = await data.updateTree(updatedTree, token);
+            console.log(response);
+
+            if (response.ok) {
+                Store.addNotification({
+                    title: "Succesvol geüpdatet!",
+                    message: `Boom met ID: ${updatedTree.id} is succesvol geüpdatet.`,
+                    type: "success",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animate__animated", "animate__bounceIn"],
+                    animationOut: ["animate__animated", "animate__zoomOut"],
+                    dismiss: {
+                        duration: 3000,
+                        onScreen: true
+                    }
+                });
+                fetchTreesData();
+            } else {
+                const errorData = await response.json();
+                console.error("Error updating tree:", errorData);
+                Store.addNotification({
+                    title: "Update mislukt",
+                    message: `Kon boom met ID: ${updatedTree.id} niet updaten.`,
+                    type: "danger",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animate__animated", "animate__shakeX"],
+                    animationOut: ["animate__animated", "animate__fadeOut"],
+                    dismiss: {
+                        duration: 3000,
+                        onScreen: true
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error in handleUpdateTree:", error);
+        }
+    };
+
     return (
         <div className="layout">
-            <ReactNotifications/>
+            <ReactNotifications />
             <Navbar />
             <div className={`map-container ${selectedTree || clickPosition ? 'map-container-selected' : ''}`}>
                 <div className="map-area">
@@ -267,7 +325,7 @@ const MapView = ({ fetchTrees }) => {
                     </MapContainer>
 
                 </div>
-                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} id="tree-detail" />}
+                {selectedTree && <TreeDetail selectedTree={selectedTree} onClose={handleCloseDetail} onDelete={handleDeleteTree} onUpdate={handleUpdateTree} isAuthenticated={isAuthenticated} id="tree-detail" />}
                 {clickPosition && (
                     <TreeList
                         treeList={treesInCircle}
@@ -284,7 +342,8 @@ const MapView = ({ fetchTrees }) => {
     );
 };
 MapView.propTypes = {
-    fetchTrees: PropTypes.func.isRequired
+    fetchTrees: PropTypes.func.isRequired,
+    refresh: PropTypes.func.isRequired
 };
 MapEvents.propTypes = {
     onClick: PropTypes.func.isRequired,
