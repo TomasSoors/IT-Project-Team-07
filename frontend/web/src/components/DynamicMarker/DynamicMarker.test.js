@@ -5,13 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import treeLogo from '../../../../shared/images/tree-icon.png';
 import selectedTreeLogo from '../../../../shared/images/tree-icon-selected.png';
 import PropTypes from 'prop-types';
-
-export function getIconSize(zoom) {
-    if (zoom >= 16) return [40, 40];
-    if (zoom === 15 || zoom === 14) return [30, 30];
-    if (zoom === 13) return [20, 20];
-    return [0, 0];
-}
+import { getIconSize } from '../utils/mapUtils.test';
 
 const DynamicMarker = ({ tree, isSelected, selectedTreeFromList, onTreeSelect }) => {
     const map = useMap();
