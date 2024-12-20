@@ -47,6 +47,17 @@ describe('MapView Component', () => {
         fetch.resetMocks();
     });
 
+    test('fetches trees on mount', async () => {
+        const comp = render(
+            <MemoryRouter>
+                <MapView fetchTrees={mockFetchTrees} />
+            </MemoryRouter>
+        );
+        await waitFor(() => {
+            expect(data.getTrees).toHaveBeenCalled();
+        })
+      });
+      
     test('renders the map container and controls', async () => {
         const comp = render(
             <MemoryRouter>
@@ -66,10 +77,8 @@ describe('MapView Component', () => {
         );
 
         await waitFor(() => {
-            // const markers = screen.getAllByAltText(/^dynamic-marker-\d+$/);
             const markers = screen.getByAltText("dynamic-marker-1");
             expect(markers).toBeInTheDocument();
-            // expect(markers).toHaveLength(2);
         });
 
 

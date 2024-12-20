@@ -12,7 +12,6 @@ import TreeList from '../TreeList/TreeList';
 import { ReactNotifications, Store } from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
 import 'animate.css/animate.min.css';
-
 const layers = [
     {
         name: 'Standaard',
@@ -88,7 +87,7 @@ const LayerControl = ({ activeLayer, setActiveLayer }) => {
                 >
                     {layers.map((layer) => (
                         <div
-                            key={layer.name}  // Use unique `name` as key
+                            key={layer.name}
                             style={{
                                 display: 'inline-block',
                                 margin: '5px',
@@ -162,11 +161,11 @@ const MapView = ({ fetchTrees, refresh }) => {
 
     const fetchTreesData = async () => {
         const fetchedTrees = await data.getTrees();
-        if (sessionStorage.getItem("token")) {setIsAuthenticated(true)};
+        if (sessionStorage.getItem("token")) { setIsAuthenticated(true) };
         setTrees(fetchedTrees);
     };
     useEffect(() => {
-        fetchTreesData();        
+        fetchTreesData();
     }, [fetchTrees, refresh]);
 
 
@@ -212,7 +211,7 @@ const MapView = ({ fetchTrees, refresh }) => {
 
     const handleDeleteTree = async () => {
         const token = sessionStorage.getItem('token');
-        
+
         if (!token) {
             console.error("No authentication token found.");
             return;
@@ -241,18 +240,18 @@ const MapView = ({ fetchTrees, refresh }) => {
         }
     };
 
-    const handleUpdateTree = async (updatedTree) => {      
+    const handleUpdateTree = async (updatedTree) => {
         const token = sessionStorage.getItem('token');
-        
+
         if (!token) {
             console.error("No authentication token found.");
             return;
         }
-    
+
         try {
             const response = await data.updateTree(updatedTree, token);
             console.log(response);
-            
+
             if (response.ok) {
                 Store.addNotification({
                     title: "Succesvol geüpdatet!",
@@ -267,7 +266,7 @@ const MapView = ({ fetchTrees, refresh }) => {
                         onScreen: true
                     }
                 });
-                fetchTreesData(); 
+                fetchTreesData();
             } else {
                 const errorData = await response.json();
                 console.error("Error updating tree:", errorData);
@@ -288,11 +287,11 @@ const MapView = ({ fetchTrees, refresh }) => {
         } catch (error) {
             console.error("Error in handleUpdateTree:", error);
         }
-    };    
+    };
 
     return (
         <div className="layout">
-            <ReactNotifications/>
+            <ReactNotifications />
             <Navbar />
             <div className={`map-container ${selectedTree || clickPosition ? 'map-container-selected' : ''}`}>
                 <div className="map-area">
