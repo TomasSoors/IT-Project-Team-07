@@ -148,6 +148,8 @@ TreeDetail.propTypes = {
     }),
     onClose: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.func.isRequired
 };
 
 TreeDetail.defaultProps = {
