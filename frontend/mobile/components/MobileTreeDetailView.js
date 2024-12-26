@@ -26,7 +26,6 @@ const MobileTreeDetailView = ({ route }) => {
   const handleUpdate = async () => {
     const updatedTree = { ...tree, height: parseFloat(height), diameter: parseFloat(diameter) };
     data.updateTree(updatedTree, token);
-    navigation.goBack();
   };
 
   const handleDelete = async () => {
