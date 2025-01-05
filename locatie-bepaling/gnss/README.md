@@ -46,7 +46,7 @@ source /home/user/Projects/catkin_ws/devel/setup.bash
 roscore
 ```
 
-### 5. Script runnen
+### 6. Script runnen
 Open een nieuwe terminal en attach terug met de docker container.
 ```
 docker exec -it pxl_noetic_go1_companion bash
@@ -61,7 +61,7 @@ Je bent nu klaar om metingen te doen!
 
 Na afloop doe je een ctrl + c in de laatste terminal waar het script runde.
 
-### 6. Coördinaten afhalen
+### 7. Coördinaten afhalen
 Open een nieuwe terminal en voer volgend commando uit. Je kan de log file dan terugvinden in je ~/Desktop folder.
 ```
 docker cp pxl_noetic_go1_companion:/home/user/logs/gps_publisher.log ~/Desktop/gps_publisher.log
