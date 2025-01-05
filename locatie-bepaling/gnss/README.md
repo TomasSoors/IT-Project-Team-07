@@ -61,7 +61,10 @@ Je bent nu klaar om metingen te doen!
 
 Na afloop doe je een ctrl + c in de laatste terminal waar het script runde.
 
-### 7. Coördinaten afhalen
+### 7. Dashboard altus nr3 bekijken
+Je kan op het dashboard van de altus nr3 nog handige info terugvinden. Zoals hoeveel satelieten er verbonden zijn, de connectie met bluetooth, batterij percentages, etc. Om het dashboard te zien surf je naar **http://192.168.20.1/**.
+
+### 8. Coördinaten afhalen
 Open een nieuwe terminal en voer volgend commando uit. Je kan de log file dan terugvinden in je ~/Desktop folder.
 ```
 docker cp pxl_noetic_go1_companion:/home/user/logs/gps_publisher.log ~/Desktop/gps_publisher.log
