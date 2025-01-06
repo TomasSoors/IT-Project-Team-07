@@ -18,7 +18,10 @@ const LoginView = () => {
             if (token) {
                 Alert.alert('Login Successful', 'You have successfully logged in!');
                 SecureStore.setItemAsync('token', token);
-                navigation.navigate('Map')
+                navigation.reset({
+                    indexx: 0,
+                    routes: [{ name: 'Map' }]
+                })
             }
         } catch (error) {
             Alert.alert('Login Failed', error.message);
@@ -29,7 +32,10 @@ const LoginView = () => {
         try {
             await SecureStore.deleteItemAsync('token');
             Alert.alert("Successfully logged out.")
-            navigation.navigate('Map')
+            navigation.reset({
+                indexx: 0,
+                routes: [{ name: 'Map' }]
+            })
         } catch (error) {
             console.error("Er is een fout opgetreden bij het revoken van de token:", error);
         }
@@ -117,6 +123,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         marginVertical: 10,
+        paddingLeft: 10,
     },
     eyeIcon: {
         padding: 10,
