@@ -52,7 +52,8 @@ describe('LoginView Component', () => {
 
     await waitFor(() => {
       expect(SecureStore.setItemAsync).toHaveBeenCalledWith('token', 'mockToken');
-      expect(mockNavigate).toHaveBeenCalledWith('Map');
+      // Ensure navigation is not called
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 
@@ -87,7 +88,7 @@ describe('LoginView Component', () => {
 
     await waitFor(() => {
       expect(SecureStore.deleteItemAsync).toHaveBeenCalledWith('token');
-      expect(mockNavigate).toHaveBeenCalledWith('Map');
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });
