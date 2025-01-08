@@ -1,0 +1,8 @@
+SonarQube:
+
+user: admin
+pass: Student123**
+
+token:  sqp_10f9fbc16aa3cbc0f7898b9ef29dcaf94e8792f5
+
+
